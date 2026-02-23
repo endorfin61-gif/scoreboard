@@ -10,11 +10,9 @@
       --glass2: rgba(10,12,16,.38);
       --fg: #fff;
     }
-    body{
-      margin:0;
-      background: transparent; /* важно */
-      font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial;
-    }
+    body{ margin:0; background: transparent; font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial; }
+
+    /* TOP CENTER SCOREBAR */
     .wrap{
       position: fixed;
       top: 18px;
@@ -31,34 +29,37 @@
       margin-bottom: 10px;
     }
     .title{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px 16px;
-      border-radius: 16px;
-      color: var(--fg);
-      font-weight: 950;
-      font-size: 24px;
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 10px 16px; border-radius: 16px; color: var(--fg);
+      font-weight: 950; font-size: 24px; letter-spacing: .2px;
       background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
       background-color: var(--glass);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 16px 44px rgba(0,0,0,.26);
       white-space: nowrap;
+      max-width: 1400px;
+      overflow:hidden;
+      text-overflow: ellipsis;
     }
-    .live{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
+
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
       padding: 10px 14px;
       border-radius: 999px;
       color: var(--fg);
       font-weight: 1000;
+      font-size: 16px;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.16);
+      box-shadow: 0 16px 44px rgba(0,0,0,.22);
+      white-space: nowrap;
+    }
+
+    .live{
+      background: rgba(200,0,0,.82);
       font-size: 18px;
       letter-spacing: .8px;
-      text-transform: uppercase;
-      background: rgba(200,0,0,.82);
-      box-shadow: 0 16px 44px rgba(0,0,0,.22);
     }
     .dot{
       width: 10px; height: 10px;
@@ -74,47 +75,35 @@
     }
 
     .row{
-      display:flex;
-      gap: 10px;
-      align-items: stretch;
-      justify-content: center;
+      display:flex; gap: 10px; align-items: stretch; justify-content: center;
     }
     .team{
-      display:flex;
-      align-items:center;
-      border-radius: 18px;
-      overflow:hidden;
+      display:flex; align-items:center;
+      border-radius: 18px; overflow:hidden;
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
       background-color: var(--glass);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 16px 44px rgba(0,0,0,.26);
       min-width: 520px;
     }
-    .bar{
-      width: 12px;
-      align-self: stretch;
-    }
+    .bar{ width: 12px; align-self: stretch; }
+
     .logoWrap{
-      width: 56px;
-      height: 56px;
-      margin-left: 12px;
+      width: 56px; height: 56px; margin-left: 12px;
       border-radius: 999px;
       background: rgba(255,255,255,.10);
       border: 1px solid rgba(255,255,255,.18);
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      display:flex; align-items:center; justify-content:center;
       overflow:hidden;
       flex: 0 0 auto;
     }
     .logo{
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       object-fit: contain;
       border-radius: 999px;
       filter: drop-shadow(0 10px 16px rgba(0,0,0,.35));
     }
+
     .name{
       padding: 12px 14px;
       color: var(--fg);
@@ -126,6 +115,7 @@
       text-overflow:ellipsis;
       max-width: 520px;
     }
+
     .score{
       padding: 10px 16px;
       font-size: 46px;
@@ -144,10 +134,7 @@
     }
 
     .meta{
-      display:flex;
-      gap:10px;
-      justify-content:center;
-      margin-top:10px;
+      display:flex; gap:10px; justify-content:center; margin-top:10px;
     }
     .pill{
       color: var(--fg);
@@ -157,9 +144,9 @@
       border-radius: 16px;
       font-size: 22px;
       font-weight: 950;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 14px 40px rgba(0,0,0,.18);
+      white-space: nowrap;
     }
     .pill.status{
       background: rgba(255,255,255,.16);
@@ -167,20 +154,68 @@
       text-transform: uppercase;
     }
 
+    /* BOTTOM LEFT BRAND LOGO */
+    .brand{
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      z-index: 9999;
+      pointer-events:none;
+      display:none;
+    }
+    .brand img{
+      width: 92px;
+      height: 92px;
+      object-fit: contain;
+      opacity: .92;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,.35));
+    }
+
+    /* BOTTOM RIGHT DATE/TIME */
+    .dt{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9999;
+      pointer-events:none;
+      display:none;
+    }
+    .dt .box{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 14px;
+      border-radius: 16px;
+      color: var(--fg);
+      font-weight: 950;
+      font-size: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      background-color: var(--glass);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 14px 40px rgba(0,0,0,.18);
+      white-space: nowrap;
+    }
+
     @media (max-width: 1200px){
       .team{ min-width: 420px; }
       .name{ font-size: 24px; }
       .score{ font-size: 40px; }
       .title{ font-size: 20px; }
+      .brand img{ width: 76px; height: 76px; }
+      .dt .box{ font-size: 16px; }
     }
   </style>
 </head>
 <body>
-  <!-- ВАЖНО: есть дефолтный текст, даже если API временно умер -->
   <div class="wrap">
     <div class="topline">
       <div id="title" class="title">Табло</div>
-      <div id="liveBadge" class="live"><span class="dot"></span> LIVE</div>
+
+      <div id="liveBadge" class="badge live" style="display:none">
+        <span class="dot"></span> LIVE
+      </div>
+
+      <div id="seasonBadge" class="badge" style="display:none">2025–2026</div>
     </div>
 
     <div class="row">
@@ -210,10 +245,23 @@
     </div>
   </div>
 
+  <div class="brand" id="brand">
+    <img id="brandImg" alt="">
+  </div>
+
+  <div class="dt" id="dt">
+    <div class="box">
+      <span id="eventDateText">—</span>
+      <span id="localTimeText">—</span>
+    </div>
+  </div>
+
   <script>
+    // Твой Apps Script URL:
     const API_URL = "https://script.google.com/macros/s/AKfycbyDozVuSqO2dxX3lH_xRwpJ9BpVib0ZsW7NDSoJ7lnRjxlz2pPBgGHhmMXJKPeGIxpGgA/exec";
 
     let lastA = null, lastB = null;
+    let lastState = null;
 
     function bump(el){
       el.classList.remove("bump");
@@ -221,35 +269,90 @@
       el.classList.add("bump");
     }
 
-    // JSONP callback
+    function fmtDateISOToRU(iso){
+      // iso: YYYY-MM-DD
+      if(!iso) return "";
+      const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if(!m) return String(iso);
+      return `${m[3]}.${m[2]}.${m[1]}`;
+    }
+
+    function updateLocalTime(){
+      if(!lastState) return;
+
+      const show = !!lastState.showDateTime;
+      const dtEl = document.getElementById("dt");
+      if(!show){
+        dtEl.style.display = "none";
+        return;
+      }
+
+      dtEl.style.display = "";
+      const tz = lastState.timeZone || "Europe/Moscow";
+      const now = new Date();
+
+      const timeText = new Intl.DateTimeFormat("ru-RU", {
+        timeZone: tz,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }).format(now);
+
+      document.getElementById("localTimeText").textContent = timeText;
+
+      const d = (lastState.eventDate || "").trim();
+      const dateText = d ? ("Дата: " + fmtDateISOToRU(d)) : "";
+      document.getElementById("eventDateText").textContent = dateText || " ";
+    }
+    setInterval(updateLocalTime, 500);
+
     window.onState = function(s){
       try{
+        lastState = s;
+
+        // title
         document.getElementById("title").textContent = s.title || "";
 
+        // LIVE badge (только верхний)
         const liveBadge = document.getElementById("liveBadge");
         liveBadge.style.display = s.live ? "" : "none";
 
+        // Season badge
+        const season = (s.season || "").trim();
+        const seasonBadge = document.getElementById("seasonBadge");
+        if(season){
+          seasonBadge.textContent = season;
+          seasonBadge.style.display = "";
+        } else {
+          seasonBadge.style.display = "none";
+        }
+
+        // Status pill: показываем всё, КРОМЕ "LIVE"
         const st = (s.status || "").trim();
         const statusEl = document.getElementById("status");
-        statusEl.style.display = st ? "" : "none";
-        statusEl.textContent = st;
+        if(!st || st.toUpperCase() === "LIVE"){
+          statusEl.style.display = "none";
+        } else {
+          statusEl.style.display = "";
+          statusEl.textContent = st;
+        }
 
+        // teams
         document.getElementById("nameA").textContent = s.teamA?.name ?? "";
         document.getElementById("nameB").textContent = s.teamB?.name ?? "";
 
+        // colors
         document.getElementById("barA").style.background = s.teamA?.color || "#1e88e5";
         document.getElementById("barB").style.background = s.teamB?.color || "#e53935";
 
+        // score + bump
         const a = s.teamA?.score ?? 0;
         const b = s.teamB?.score ?? 0;
-
         const sa = document.getElementById("scoreA");
         const sb = document.getElementById("scoreB");
-
         if (lastA !== null && a !== lastA) bump(sa);
         if (lastB !== null && b !== lastB) bump(sb);
         lastA = a; lastB = b;
-
         sa.textContent = a;
         sb.textContent = b;
 
@@ -258,30 +361,26 @@
         const logoWrapA = document.getElementById("logoWrapA");
         const logoA = document.getElementById("logoA");
         if (urlA){
-          logoA.src = urlA;
-          logoWrapA.style.display = "";
-        }else{
-          logoA.removeAttribute("src");
-          logoWrapA.style.display = "none";
+          logoA.src = urlA; logoWrapA.style.display = "";
+        } else {
+          logoA.removeAttribute("src"); logoWrapA.style.display = "none";
         }
 
         const urlB = (s.teamB?.logo || "").trim();
         const logoWrapB = document.getElementById("logoWrapB");
         const logoB = document.getElementById("logoB");
         if (urlB){
-          logoB.src = urlB;
-          logoWrapB.style.display = "";
-        }else{
-          logoB.removeAttribute("src");
-          logoWrapB.style.display = "none";
+          logoB.src = urlB; logoWrapB.style.display = "";
+        } else {
+          logoB.removeAttribute("src"); logoWrapB.style.display = "none";
         }
 
-        // period/clock (если включишь в состоянии)
+        // period
         const period = document.getElementById("period");
         period.style.display = s.showPeriod ? "" : "none";
         period.textContent = s.periodLabel || "";
 
-        // clock — на этом этапе можно просто показывать накопленное baseMs
+        // clock (показываем накопленное baseMs; старт/пауза — через пульт)
         const clock = document.getElementById("clock");
         clock.style.display = s.showClock ? "" : "none";
         const ms = s.clock?.baseMs || 0;
@@ -289,6 +388,23 @@
         const mm = String(Math.floor(t/60)).padStart(2,'0');
         const ss = String(t%60).padStart(2,'0');
         clock.textContent = `${mm}:${ss}`;
+
+        // brand logo bottom-left
+        const brandUrl = (s.brandLogo || "").trim();
+        const brandShow = !!s.showBrandLogo && !!brandUrl;
+        const brandEl = document.getElementById("brand");
+        const brandImg = document.getElementById("brandImg");
+        if(brandShow){
+          brandImg.src = brandUrl;
+          brandEl.style.display = "";
+        } else {
+          brandImg.removeAttribute("src");
+          brandEl.style.display = "none";
+        }
+
+        // date/time bottom-right
+        updateLocalTime();
+
       }catch(e){}
     };
 
