@@ -1,63 +1,406 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>Score Control</title>
-<style>
-body{font-family:Arial;padding:20px;}
-input,button{padding:10px;margin:5px;font-size:16px;}
-button{cursor:pointer;}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Score Control</title>
+  <style>
+    body{font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial;margin:14px;background:#f6f7fb;color:#111;}
+    .box{background:#fff;border:1px solid #e6e7ee;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 10px 26px rgba(0,0,0,.06);}
+    h2{margin:0 0 10px 0}
+    label{display:block;font-weight:900;margin:10px 0 6px}
+    input[type="text"], input[type="url"]{
+      width:100%;padding:12px 12px;border-radius:12px;border:1px solid #d8dbe6;font-size:16px;
+      outline:none;
+    }
+    input[type="text"]:focus, input[type="url"]:focus{border-color:#7a86ff;box-shadow:0 0 0 4px rgba(122,134,255,.18);}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .grow{flex:1 1 260px}
+    .btn{
+      padding:12px 14px;border-radius:14px;border:0;background:#111;color:#fff;font-weight:1000;font-size:16px;
+      cursor:pointer;
+    }
+    .btn.secondary{background:#4a4f64}
+    .btn.danger{background:#b00020}
+    .btn.ghost{background:#eef0f7;color:#111}
+    .btn.big{font-size:22px;padding:14px 18px;border-radius:16px}
+    .score{font-size:34px;font-weight:1100;min-width:54px;text-align:center}
+    .muted{color:#5a5f75;font-size:14px}
+    .toggle{display:flex;gap:10px;align-items:center;margin-top:8px}
+    input[type="color"]{width:56px;height:44px;border:0;background:transparent;padding:0}
+    .pill{
+      display:inline-flex;align-items:center;gap:10px;
+      background:#111;color:#fff;border-radius:999px;padding:8px 12px;font-weight:1000;font-size:13px;
+    }
+    .pill.ok{background:#0f7b3e}
+    .pill.bad{background:#b00020}
+    .sep{height:1px;background:#eceef6;margin:12px 0}
+    .mini{font-size:13px}
+  </style>
 </head>
 <body>
 
-<h2>Пульт управления</h2>
+  <h2>Пульт управления табло</h2>
 
-<input id="api" placeholder="Вставь Apps Script URL"><br>
-<button onclick="save()">Сохранить API</button>
+  <div class="box">
+    <div class="muted">1) Вставь URL Google Apps Script (оканчивается на <b>/exec</b>) и нажми «Сохранить».</div>
+    <label>Apps Script URL</label>
+    <input id="api" type="url" placeholder="https://script.google.com/macros/s/.../exec">
+    <div class="row" style="margin-top:10px">
+      <button class="btn" onclick="saveApi()">Сохранить</button>
+      <span id="apiStatus" class="pill bad">не настроено</span>
+    </div>
+    <div class="muted mini" style="margin-top:8px">Подсказка: после сохранения, этот URL запомнится на телефоне.</div>
+  </div>
 
-<h3>Заголовок</h3>
-<input id="title"><button onclick="setTitle()">Обновить</button>
+  <div class="box">
+    <label>Заголовок (турнир)</label>
+    <input id="title" type="text" placeholder="Чемпионат Московской области">
+    <div class="row" style="margin-top:10px">
+      <button class="btn" onclick="pushBasics()">Обновить</button>
+      <button class="btn ghost" onclick="quickTitle('Первенство России')">Первенство России</button>
+      <button class="btn ghost" onclick="quickTitle('Чемпионат МО')">Чемпионат МО</button>
+    </div>
+  </div>
 
-<h3>Команда A</h3>
-<input id="nameA" placeholder="Название">
-<input id="colorA" type="color" value="#1e88e5">
-<input id="logoA" placeholder="URL логотипа">
-<button onclick="score('A',1)">+1</button>
-<button onclick="score('A',-1)">-1</button>
+  <div class="box">
+    <div class="row">
+      <button class="btn" onclick="setLive(true)">LIVE ON</button>
+      <button class="btn secondary" onclick="setLive(false)">LIVE OFF</button>
+      <button class="btn danger" onclick="setBreak()">ПЕРЕРЫВ</button>
+      <button class="btn secondary" onclick="clearStatus()">Снять статус</button>
+    </div>
+    <div class="muted" style="margin-top:8px">Кнопка «ПЕРЕРЫВ» сама поставит статус и (по умолчанию) скроет часы, оставив «ПЕРЕРЫВ».</div>
+  </div>
 
-<h3>Команда B</h3>
-<input id="nameB" placeholder="Название">
-<input id="colorB" type="color" value="#e53935">
-<input id="logoB" placeholder="URL логотипа">
-<button onclick="score('B',1)">+1</button>
-<button onclick="score('B',-1)">-1</button>
+  <div class="box">
+    <div class="row">
+      <div class="grow">
+        <label>Команда A</label>
+        <input id="nameA" type="text" placeholder="Команда A">
+      </div>
+      <div>
+        <label>Цвет A</label>
+        <input id="colorA" type="color" value="#1e88e5">
+      </div>
+    </div>
+    <label>Логотип A (URL PNG/SVG)</label>
+    <input id="logoA" type="url" placeholder="https://.../logoA.png">
+
+    <div class="sep"></div>
+
+    <div class="row">
+      <button class="btn big" onclick="score('A',-1)">A −</button>
+      <div class="score" id="scoreA">0</div>
+      <button class="btn big" onclick="score('A',+1)">A +</button>
+      <button class="btn ghost" onclick="setScore('A',0)">Сброс A</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="row">
+      <div class="grow">
+        <label>Команда B</label>
+        <input id="nameB" type="text" placeholder="Команда B">
+      </div>
+      <div>
+        <label>Цвет B</label>
+        <input id="colorB" type="color" value="#e53935">
+      </div>
+    </div>
+    <label>Логотип B (URL PNG/SVG)</label>
+    <input id="logoB" type="url" placeholder="https://.../logoB.png">
+
+    <div class="sep"></div>
+
+    <div class="row">
+      <button class="btn big" onclick="score('B',-1)">B −</button>
+      <div class="score" id="scoreB">0</div>
+      <button class="btn big" onclick="score('B',+1)">B +</button>
+      <button class="btn ghost" onclick="setScore('B',0)">Сброс B</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="row">
+      <div class="grow">
+        <label>Тайм (текст)</label>
+        <input id="periodLabel" type="text" placeholder="1 тайм / 2 тайм / Перерыв / Доп. время">
+      </div>
+      <div class="toggle">
+        <input id="showPeriod" type="checkbox" checked>
+        <label style="margin:0;font-weight:900">Показывать</label>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <button class="btn ghost" onclick="setPeriod('1 тайм')">1 тайм</button>
+      <button class="btn ghost" onclick="setPeriod('2 тайм')">2 тайм</button>
+      <button class="btn ghost" onclick="setPeriod('Доп. время')">Доп.</button>
+      <button class="btn secondary" onclick="pushBasics()">Обновить</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="row">
+      <div class="toggle">
+        <input id="showClock" type="checkbox">
+        <label style="margin:0;font-weight:900">Показывать время</label>
+      </div>
+      <span class="muted">Таймер: старт / пауза / сброс</span>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <button class="btn" onclick="clockStart()">Старт</button>
+      <button class="btn secondary" onclick="clockStop()">Пауза</button>
+      <button class="btn danger" onclick="clockReset()">Сброс</button>
+      <button class="btn ghost" onclick="showClock(false)">Скрыть</button>
+      <button class="btn ghost" onclick="showClock(true)">Показать</button>
+    </div>
+
+    <div class="muted" id="clockInfo" style="margin-top:8px">—</div>
+  </div>
+
+  <div class="box">
+    <div class="row">
+      <button class="btn danger" onclick="resetAll()">Сбросить всё (0:0)</button>
+      <button class="btn secondary" onclick="pull()">Обновить состояние</button>
+    </div>
+  </div>
 
 <script>
-let API="";
+  let API = "";
+  let state = null;
 
-function save(){
-API=document.getElementById("api").value;
-localStorage.setItem("api",API);
-alert("Сохранено");
-}
+  function getApi(){
+    return localStorage.getItem("SCORE_API") || "";
+  }
 
-async function post(data){
-await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
-}
+  function setApiStatus(ok){
+    const el = document.getElementById("apiStatus");
+    if(ok){
+      el.textContent = "готово";
+      el.classList.remove("bad");
+      el.classList.add("ok");
+    }else{
+      el.textContent = "не настроено";
+      el.classList.remove("ok");
+      el.classList.add("bad");
+    }
+  }
 
-function setTitle(){
-post({title:document.getElementById("title").value});
-}
+  function saveApi(){
+    const v = document.getElementById("api").value.trim();
+    if(!v) return alert("Вставь URL Apps Script (/exec).");
+    localStorage.setItem("SCORE_API", v);
+    API = v;
+    setApiStatus(true);
+    pull();
+    alert("Сохранено. Можно управлять табло.");
+  }
 
-function score(team,val){
-let key=team==="A"?"teamA":"teamB";
-fetch(API).then(r=>r.json()).then(s=>{
-let newScore=s[key].score+val;
-if(newScore<0)newScore=0;
-post({[key]:{score:newScore,name:document.getElementById("name"+team).value,color:document.getElementById("color"+team).value,logo:document.getElementById("logo"+team).value}});
-});
-}
+  // --- Отправка патча БЕЗ CORS: GET ?action=set&payload=...
+  function sendPatch(patch){
+    API = API || getApi();
+    if(!API) return alert("Сначала вставь и сохрани Apps Script URL.");
+    const payload = encodeURIComponent(JSON.stringify(patch));
+    const url = API + "?action=set&payload=" + payload + "&t=" + Date.now();
+
+    // “тихая” отправка: Image()
+    const img = new Image();
+    img.src = url;
+
+    // обновим локально (на глаз) и подтянем через секунду
+    setTimeout(pull, 800);
+  }
+
+  async function pull(){
+    API = API || getApi();
+    if(!API) { setApiStatus(false); return; }
+
+    document.getElementById("api").value = API;
+    setApiStatus(true);
+
+    try{
+      const r = await fetch(API + "?t=" + Date.now(), { cache:"no-store" });
+      state = await r.json();
+      render();
+    }catch(e){
+      // иногда fetch к apps script может капризничать; это не критично
+    }
+  }
+
+  function render(){
+    if(!state) return;
+
+    document.getElementById("title").value = state.title || "";
+    document.getElementById("nameA").value = state.teamA?.name || "";
+    document.getElementById("nameB").value = state.teamB?.name || "";
+    document.getElementById("colorA").value = state.teamA?.color || "#1e88e5";
+    document.getElementById("colorB").value = state.teamB?.color || "#e53935";
+    document.getElementById("logoA").value = state.teamA?.logo || "";
+    document.getElementById("logoB").value = state.teamB?.logo || "";
+
+    document.getElementById("scoreA").textContent = state.teamA?.score ?? 0;
+    document.getElementById("scoreB").textContent = state.teamB?.score ?? 0;
+
+    document.getElementById("showPeriod").checked = !!state.showPeriod;
+    document.getElementById("periodLabel").value = state.periodLabel || "";
+
+    document.getElementById("showClock").checked = !!state.showClock;
+
+    const c = state.clock || {};
+    document.getElementById("clockInfo").textContent =
+      (c.running ? "⏱️ идёт" : "⏸️ пауза") + " | накоплено: " + msToMMSS(c.baseMs||0);
+  }
+
+  function msToMMSS(ms){
+    ms = Math.max(0, ms|0);
+    const t = Math.floor(ms/1000);
+    const m = String(Math.floor(t/60)).padStart(2,'0');
+    const s = String(t%60).padStart(2,'0');
+    return `${m}:${s}`;
+  }
+
+  // --- Кнопки / действия
+
+  function quickTitle(t){
+    document.getElementById("title").value = t;
+    pushBasics();
+  }
+
+  function pushBasics(){
+    sendPatch({
+      title: document.getElementById("title").value.trim(),
+      teamA: {
+        name: document.getElementById("nameA").value.trim(),
+        color: document.getElementById("colorA").value,
+        logo: document.getElementById("logoA").value.trim()
+      },
+      teamB: {
+        name: document.getElementById("nameB").value.trim(),
+        color: document.getElementById("colorB").value,
+        logo: document.getElementById("logoB").value.trim()
+      },
+      showPeriod: document.getElementById("showPeriod").checked,
+      periodLabel: document.getElementById("periodLabel").value.trim(),
+      showClock: document.getElementById("showClock").checked
+    });
+  }
+
+  function score(team, delta){
+    if(!state) return pull();
+    const key = team === "A" ? "teamA" : "teamB";
+    const cur = state[key]?.score ?? 0;
+    const next = Math.max(0, cur + delta);
+
+    // сохраняем также названия/цвета/лого (чтобы не забыть)
+    const patch = {};
+    patch[key] = {
+      score: next,
+      name: document.getElementById("name"+team).value.trim(),
+      color: document.getElementById("color"+team).value,
+      logo: document.getElementById("logo"+team).value.trim()
+    };
+    sendPatch(patch);
+    // обновим локально мгновенно
+    state[key].score = next;
+    render();
+  }
+
+  function setScore(team, value){
+    if(!state) return pull();
+    const key = team === "A" ? "teamA" : "teamB";
+    const patch = {};
+    patch[key] = { score: Math.max(0, value|0) };
+    sendPatch(patch);
+  }
+
+  function setPeriod(text){
+    document.getElementById("periodLabel").value = text;
+    document.getElementById("showPeriod").checked = true;
+    sendPatch({ showPeriod: true, periodLabel: text, status: "LIVE", live: true });
+  }
+
+  function setLive(v){
+    sendPatch({ live: !!v, status: v ? "LIVE" : "" });
+  }
+
+  function setBreak(){
+    // “перерыв” одной кнопкой: статус + выключить часы + включить тайм
+    // и поставить текст "ПЕРЕРЫВ"
+    // + поставить live true (обычно в эфире остаётся)
+    // + если таймер шёл — остановить и зафиксировать baseMs (это делает Apps Script merge, но мы сохраняем clock отдельно)
+    if(!state) return pull();
+
+    const c = state.clock || {};
+    const patch = {
+      status: "ПЕРЕРЫВ",
+      live: true,
+      showClock: false,
+      showPeriod: true,
+      periodLabel: "ПЕРЕРЫВ"
+    };
+
+    // если таймер шёл — останавливаем, фиксируя накопленное
+    if(c.running){
+      const base = (c.baseMs||0) + (Date.now() - (c.startTs||Date.now()));
+      patch.clock = { running:false, startTs:null, baseMs: base };
+    }
+
+    sendPatch(patch);
+  }
+
+  function clearStatus(){
+    sendPatch({ status: "" });
+  }
+
+  function showClock(v){
+    document.getElementById("showClock").checked = !!v;
+    sendPatch({ showClock: !!v });
+  }
+
+  function clockStart(){
+    if(!state) return pull();
+    const c = state.clock || {};
+    if(c.running) return;
+    sendPatch({ showClock: true, clock: { running:true, startTs: Date.now() }, status:"LIVE", live:true });
+  }
+
+  function clockStop(){
+    if(!state) return pull();
+    const c = state.clock || {};
+    if(!c.running) return;
+    const base = (c.baseMs||0) + (Date.now() - (c.startTs||Date.now()));
+    sendPatch({ clock: { running:false, startTs:null, baseMs: base } });
+  }
+
+  function clockReset(){
+    sendPatch({ clock: { running:false, startTs:null, baseMs: 0 } });
+  }
+
+  function resetAll(){
+    sendPatch({
+      title: "Чемпионат Московской области",
+      status: "LIVE",
+      live: true,
+      teamA: { score: 0 },
+      teamB: { score: 0 },
+      showClock: false,
+      showPeriod: false,
+      periodLabel: "1 тайм",
+      clock: { running:false, startTs:null, baseMs: 0 }
+    });
+  }
+
+  // init
+  (function init(){
+    API = getApi();
+    document.getElementById("api").value = API;
+    setApiStatus(!!API);
+    pull();
+    setInterval(pull, 2000);
+  })();
 </script>
 
 </body>
