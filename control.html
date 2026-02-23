@@ -129,6 +129,7 @@
     </div>
     <div class="row" style="margin-top:10px">
       <button class="btn" onclick="saveBrand()">Сохранить логотип</button>
+      <button class="btn ghost" onclick="setBrandVK()">VK группа</button>
       <button class="btn secondary" onclick="hideBrand()">Скрыть</button>
     </div>
     <div class="muted small" style="margin-top:8px">Лучше PNG 512×512 с прозрачным фоном.</div>
@@ -348,6 +349,7 @@
   // Где лежат логотипы: /assets/<file>.png
   const LOGO_EXT = ".png";
   const LOGO_BASE = "https://endorfin61-gif.github.io/scoreboard/assets/";
+  const DEFAULT_BRAND_LOGO = LOGO_BASE + "vklogogroup" + LOGO_EXT;
 
   const TEAM_PRESETS = {
     "Зоркий девочки":               { name:"Зоркий девочки",                 file:"zorkiy_dev",   color:"#1e88e5" },
@@ -543,6 +545,12 @@
   }
 
   // ---------- Brand ----------
+  function setBrandVK(){
+    document.getElementById("brandLogo").value = DEFAULT_BRAND_LOGO;
+    document.getElementById("showBrandLogo").checked = true;
+    saveBrand();
+  }
+
   function saveBrand(){
     sendPatch({
       brandLogo: document.getElementById("brandLogo").value.trim(),

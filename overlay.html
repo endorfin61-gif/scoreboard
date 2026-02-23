@@ -252,6 +252,73 @@
       .brand img{ width: 76px; height: 76px; }
       .dt .box{ font-size: 16px; }
     }
+  
+    /* GOAL ANIMATION */
+    .goalToast{
+      position: fixed;
+      left: 50%;
+      top: 55%;
+      transform: translate(-50%, -50%);
+      z-index: 10000;
+      pointer-events:none;
+      display:none;
+      text-align:center;
+    }
+    .goalToast .bubble{
+      display:inline-flex;
+      align-items:center;
+      gap:12px;
+      padding: 16px 22px;
+      border-radius: 999px;
+      color: #fff;
+      font-weight: 1100;
+      font-size: 40px;
+      letter-spacing: 1px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 22px 70px rgba(0,0,0,.35);
+    }
+    .goalToast .team{
+      font-size: 22px;
+      font-weight: 900;
+      opacity: .9;
+      max-width: 600px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .goalToast.show{
+      display:block;
+      animation: goalPop .95s ease-out both;
+    }
+    @keyframes goalPop{
+      0%{ transform: translate(-50%,-50%) scale(.7); opacity:0; }
+      18%{ transform: translate(-50%,-50%) scale(1.06); opacity:1; }
+      70%{ transform: translate(-50%,-50%) scale(1); opacity:1; }
+      100%{ transform: translate(-50%,-50%) scale(.98); opacity:0; }
+    }
+
+    .goalFlash{
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      pointer-events:none;
+      display:none;
+      background: rgba(255,255,255,.0);
+    }
+    .goalFlash.show{
+      display:block;
+      animation: flash .55s ease-out both;
+    }
+    @keyframes flash{
+      0%{ background: rgba(255,255,255,0); }
+      20%{ background: rgba(255,255,255,.14); }
+      45%{ background: rgba(255,255,255,0); }
+      70%{ background: rgba(255,255,255,.10); }
+      100%{ background: rgba(255,255,255,0); }
+    }
+
   </style>
 </head>
 
@@ -312,9 +379,21 @@
     </div>
   </div>
 
+
+  <div class="goalFlash" id="goalFlash"></div>
+  <div class="goalToast" id="goalToast">
+    <div class="bubble">
+      <span id="goalWord">ГОЛ!</span>
+      <span class="team" id="goalTeam">—</span>
+    </div>
+  </div>
+
+
   <script>
     // твой Apps Script URL:
     const API_URL = "https://script.google.com/macros/s/AKfycbyDozVuSqO2dxX3lH_xRwpJ9BpVib0ZsW7NDSoJ7lnRjxlz2pPBgGHhmMXJKPeGIxpGgA/exec";
+    // Фолбэк на случай, если brandLogo не задан в пульте
+    const DEFAULT_BRAND_LOGO = "https://endorfin61-gif.github.io/scoreboard/assets/vklogogroup.png";
 
     let lastA = null, lastB = null;
     let lastState = null;
@@ -323,6 +402,29 @@
       el.classList.remove("bump");
       void el.offsetWidth;
       el.classList.add("bump");
+    }
+
+    let goalTimer = null;
+    function showGoal(team){
+      const flash = document.getElementById("goalFlash");
+      const toast = document.getElementById("goalToast");
+      const teamEl = document.getElementById("goalTeam");
+
+      const teamName = team === "A" ? (lastState?.teamA?.name || "") : (lastState?.teamB?.name || "");
+      teamEl.textContent = teamName ? ("— " + teamName) : "";
+
+      // restart animations
+      flash.classList.remove("show");
+      toast.classList.remove("show");
+      void flash.offsetWidth; void toast.offsetWidth;
+      flash.classList.add("show");
+      toast.classList.add("show");
+
+      clearTimeout(goalTimer);
+      goalTimer = setTimeout(()=>{
+        flash.classList.remove("show");
+        toast.classList.remove("show");
+      }, 950);
     }
 
     function fmtDateISOToRU(iso){
@@ -334,7 +436,7 @@
 
     function updateLocalTime(){
       if(!lastState) return;
-      const show = !!lastState.showDateTime;
+      const show = (lastState.showDateTime !== false);
       const dtEl = document.getElementById("dt");
 
       if(!show){
@@ -409,6 +511,8 @@
 
         if (lastA !== null && a !== lastA) bump(sa);
         if (lastB !== null && b !== lastB) bump(sb);
+        if (lastA !== null && a > lastA) showGoal("A");
+        if (lastB !== null && b > lastB) showGoal("B");
         lastA = a; lastB = b;
 
         sa.textContent = a;
@@ -457,11 +561,12 @@
 
         // brand logo bottom-left
         const brandUrl = (s.brandLogo || "").trim();
-        const brandShow = !!s.showBrandLogo && !!brandUrl;
+        const effectiveBrandUrl = brandUrl || DEFAULT_BRAND_LOGO;
+        const brandShow = (s.showBrandLogo !== false) && !!effectiveBrandUrl;
         const brandEl = document.getElementById("brand");
         const brandImg = document.getElementById("brandImg");
         if(brandShow){
-          brandImg.src = brandUrl;
+          brandImg.src = effectiveBrandUrl;
           brandEl.style.display = "";
         } else {
           brandImg.removeAttribute("src");
