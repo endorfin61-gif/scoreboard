@@ -290,7 +290,7 @@
     }
     .goalToast.show{
       display:block;
-      animation: goalPop .95s ease-out both;
+      animation: goalPop 1.6s ease-out both;
     }
     @keyframes goalPop{
       0%{ transform: translate(-50%,-50%) scale(.7); opacity:0; }
@@ -309,7 +309,7 @@
     }
     .goalFlash.show{
       display:block;
-      animation: flash .55s ease-out both;
+      animation: flash .9s ease-out both;
     }
     @keyframes flash{
       0%{ background: rgba(255,255,255,0); }
@@ -404,6 +404,7 @@
       el.classList.add("bump");
     }
 
+    const GOAL_ANIM_MS = 2500; // длительность показа анимации гола (мс)
     let goalTimer = null;
     function showGoal(team){
       const flash = document.getElementById("goalFlash");
@@ -424,7 +425,7 @@
       goalTimer = setTimeout(()=>{
         flash.classList.remove("show");
         toast.classList.remove("show");
-      }, 950);
+      }, GOAL_ANIM_MS);
     }
 
     function fmtDateISOToRU(iso){
