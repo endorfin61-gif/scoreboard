@@ -71,7 +71,10 @@ function poll(){
   setTimeout(poll, 700); // можно 1000 для меньше трафика
 }
 poll();
+  .score.bump{ animation: bump .22s ease-out; }
+@keyframes bump{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.12)}
+  100%{transform:scale(1)}
+}
 </script>
-
-.score.bump{ animation: bump .22s ease-out; }
-@keyframes bump{ 0%{transform:scale(1)} 40%{transform:scale(1.12)} 100%{transform:scale(1)} }
