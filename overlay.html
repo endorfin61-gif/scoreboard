@@ -4,11 +4,23 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Score Overlay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --glass: rgba(10,12,16,.62);
-      --glass2: rgba(10,12,16,.38);
+      --accentY: #f6c400;
+      --accentB: #1f66ff;
+      --accentP: #ff4fb2;
+
+      --glass: rgba(10,12,16,.60);
+      --glass2: rgba(10,12,16,.34);
+      --stroke: rgba(255,255,255,.14);
+      --stroke2: rgba(255,255,255,.08);
       --fg: #fff;
+
+      --r: 18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
     }
     html, body{
       width:100%;
@@ -17,7 +29,7 @@
     body{
       margin:0;
       background: transparent;
-      font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial;
+      font-family: "Montserrat", -apple-system, system-ui, Segoe UI, Roboto, Arial;
     }
 
     /* TOP CENTER */
@@ -180,6 +192,23 @@
       100%{transform:scale(1)}
     }
 
+    /* Анимация смены счёта (перелистнуть/флип) */
+    .score.flip{
+      transform-origin: 50% 50%;
+      backface-visibility: hidden;
+      animation: scoreFlip .65s cubic-bezier(.2,.9,.2,1);
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.18));
+    }
+    @keyframes scoreFlip{
+      0%{ transform: perspective(700px) rotateX(0deg) scale(1); }
+      35%{ transform: perspective(700px) rotateX(-70deg) scale(1.05); }
+      50%{ transform: perspective(700px) rotateX(70deg) scale(1.05); }
+      100%{ transform: perspective(700px) rotateX(0deg) scale(1); }
+    }
+      40%{transform:scale(1.12)}
+      100%{transform:scale(1)}
+    }
+
     .meta{
       display:flex;
       gap:10px;
@@ -206,14 +235,6 @@
     }
 
     /* BOTTOM LEFT BRAND LOGO */
-    .brand{
-      position: fixed;
-      left: 18px;
-      bottom: 18px;
-      z-index: 9999;
-      pointer-events:none;
-      display:none;
-    }
     .brand img{
       width: 92px;
       height: 92px;
@@ -223,30 +244,6 @@
     }
 
     /* BOTTOM RIGHT DATE/TIME */
-    .dt{
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 9999;
-      pointer-events:none;
-      display:none;
-    }
-    .dt .box{
-      display:inline-flex;
-      gap:10px;
-      align-items:center;
-      padding: 10px 14px;
-      border-radius: 16px;
-      color: var(--fg);
-      font-weight: 950;
-      font-size: 18px;
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
-      background-color: var(--glass);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 14px 40px rgba(0,0,0,.18);
-      white-space: nowrap;
-    }
 
     @media (max-width: 1200px){
       .scorebar{ min-width: 860px; }
@@ -342,6 +339,121 @@
       100%{ background: rgba(255,255,255,0); }
     }
 
+  
+    /* TV look tweaks */
+    .wrap{ top: 22px; }
+    .topline{ gap: 12px; margin-bottom: 12px; }
+    .title{
+      padding: 10px 14px;
+      border-radius: var(--r);
+      background: linear-gradient(180deg, rgba(10,12,16,.72), rgba(10,12,16,.52));
+      border: 1px solid var(--stroke2);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-weight: 800;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      font-size: clamp(14px, 1.3vw, 18px);
+      line-height: 1.05;
+    }
+    .panel{
+      border-radius: var(--r);
+      background: linear-gradient(180deg, rgba(10,12,16,.72), rgba(10,12,16,.45));
+      border: 1px solid var(--stroke2);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .team{
+      border-radius: calc(var(--r) + 2px);
+      border: 1px solid var(--stroke2);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+    .score{
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: .02em;
+    }
+    .teamName{
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+    .period{
+      font-weight: 800;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+
+    /* Accent bars */
+    .teamA{ box-shadow: inset 4px 0 0 var(--accentY); }
+    .teamB{ box-shadow: inset 4px 0 0 var(--accentB); }
+    .timer{
+      box-shadow: inset 0 0 0 1px var(--stroke2);
+    }
+
+    /* Bottom widgets */
+    #dt{
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(10,12,16,.68), rgba(10,12,16,.40));
+      border: 1px solid var(--stroke2);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: .02em;
+    }
+
+    /* Chat overlay (manual highlight) */
+    .chatOverlay{
+      position: fixed;
+      left: 50%;
+      bottom: 34px;
+      transform: translateX(-50%);
+      z-index: 9999;
+      pointer-events: none;
+      max-width: min(1200px, 92vw);
+      width: fit-content;
+    }
+    .chatBubble{
+      border-radius: 18px;
+      padding: 14px 18px;
+      background: linear-gradient(180deg, rgba(10,12,16,.72), rgba(10,12,16,.46));
+      border: 1px solid var(--stroke2);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .chatAuthor{
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: .02em;
+      opacity: .92;
+      margin-bottom: 4px;
+    }
+    .chatText{
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.22;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .chatOverlay.show .chatBubble{
+      animation: chatIn .22s ease-out both;
+    }
+    .chatOverlay.hide .chatBubble{
+      animation: chatOut .18s ease-in both;
+    }
+    @keyframes chatIn{
+      from{ opacity: 0; transform: translateY(12px) scale(.98); }
+      to{ opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes chatOut{
+      from{ opacity: 1; transform: translateY(0) scale(1); }
+      to{ opacity: 0; transform: translateY(10px) scale(.99); }
+    }
+
   </style>
 </head>
 
@@ -390,18 +502,14 @@
       <div id="clock" class="pill" style="display:none"></div>
     </div>
   </div>
-
-  <div class="brand" id="brand">
-    <img id="brandImg" alt="">
   </div>
 
-  <div class="dt" id="dt">
-    <div class="box">
-      <span id="eventDateText">—</span>
-      <span id="localTimeText">—</span>
+  <div class="chatOverlay" id="chatOverlay" style="display:none">
+    <div class="chatBubble" id="chatBubble">
+      <div class="chatAuthor" id="chatAuthor">—</div>
+      <div class="chatText" id="chatText">—</div>
     </div>
   </div>
-
 
   <div class="goalFlash" id="goalFlash"></div>
   <div class="goalToast" id="goalToast">
@@ -411,12 +519,10 @@
     </div>
   </div>
 
-
   <script>
     // твой Apps Script URL:
     const API_URL = "https://script.google.com/macros/s/AKfycbyDozVuSqO2dxX3lH_xRwpJ9BpVib0ZsW7NDSoJ7lnRjxlz2pPBgGHhmMXJKPeGIxpGgA/exec";
     // Фолбэк на случай, если brandLogo не задан в пульте
-    const DEFAULT_BRAND_LOGO = "https://endorfin61-gif.github.io/scoreboard/assets/vklogogroup.png";
 
     let lastA = null, lastB = null;
     let lastState = null;
@@ -425,6 +531,12 @@
       el.classList.remove("bump");
       void el.offsetWidth;
       el.classList.add("bump");
+    }
+
+    function flipScore(el){
+      el.classList.remove("flip");
+      void el.offsetWidth;
+      el.classList.add("flip");
     }
 
     const GOAL_ANIM_MS = 1600; // длительность показа анимации гола (мс)
@@ -457,35 +569,6 @@
       if(!m) return String(iso);
       return `${m[3]}.${m[2]}.${m[1]}`;
     }
-
-    function updateLocalTime(){
-      if(!lastState) return;
-      const show = (lastState.showDateTime !== false);
-      const dtEl = document.getElementById("dt");
-
-      if(!show){
-        dtEl.style.display = "none";
-        return;
-      }
-      dtEl.style.display = "";
-
-      const tz = lastState.timeZone || "Europe/Moscow";
-      const now = new Date();
-
-      const timeText = new Intl.DateTimeFormat("ru-RU", {
-        timeZone: tz,
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      }).format(now);
-
-      document.getElementById("localTimeText").textContent = timeText;
-
-      const d = (lastState.eventDate || "").trim();
-      const dateText = d ? ("Дата: " + fmtDateISOToRU(d)) : "";
-      document.getElementById("eventDateText").textContent = dateText || " ";
-    }
-    setInterval(updateLocalTime, 500);
 
     window.onState = function(s){
       try{
@@ -533,8 +616,8 @@
         const sa = document.getElementById("scoreA");
         const sb = document.getElementById("scoreB");
 
-        if (lastA !== null && a !== lastA) bump(sa);
-        if (lastB !== null && b !== lastB) bump(sb);
+        if (lastA !== null && a !== lastA) flipScore(sa);
+        if (lastB !== null && b !== lastB) flipScore(sb);
         if (lastA !== null && a > lastA) showGoal("A");
         if (lastB !== null && b > lastB) showGoal("B");
         lastA = a; lastB = b;
@@ -582,23 +665,44 @@
         const mm = String(Math.floor(t/60)).padStart(2,'0');
         const ss = String(t%60).padStart(2,'0');
         clock.textContent = `${mm}:${ss}`;
+        
 
-        // brand logo bottom-left
-        const brandUrl = (s.brandLogo || "").trim();
-        const effectiveBrandUrl = brandUrl || DEFAULT_BRAND_LOGO;
-        const brandShow = (s.showBrandLogo !== false) && !!effectiveBrandUrl;
-        const brandEl = document.getElementById("brand");
-        const brandImg = document.getElementById("brandImg");
-        if(brandShow){
-          brandImg.src = effectiveBrandUrl;
-          brandEl.style.display = "";
-        } else {
-          brandImg.removeAttribute("src");
-          brandEl.style.display = "none";
+        // chat highlight (manual)
+        const chat = s.chat || {};
+        const chatEl = document.getElementById("chatOverlay");
+        const authorEl = document.getElementById("chatAuthor");
+        const textEl = document.getElementById("chatText");
+
+        if(chat && chat.show && (chat.text || "").trim()){
+          authorEl.textContent = (chat.author || "").trim();
+          textEl.textContent = (chat.text || "").trim();
+
+          // show + animate only when message changes
+          const ts = chat.ts || 0;
+          if(window.__lastChatTs !== ts){
+            window.__lastChatTs = ts;
+
+            chatEl.classList.remove("hide");
+            chatEl.classList.add("show");
+            chatEl.style.display = "";
+
+            const dur = Math.max(2000, Math.min(60000, chat.durationMs || 8000));
+            clearTimeout(window.__chatTimer);
+            window.__chatTimer = setTimeout(()=>{
+              chatEl.classList.remove("show");
+              chatEl.classList.add("hide");
+              setTimeout(()=>{ chatEl.style.display = "none"; }, 220);
+            }, dur);
+          } else {
+            // keep visible
+            chatEl.style.display = "";
+          }
+        }else{
+          clearTimeout(window.__chatTimer);
+          chatEl.classList.remove("show");
+          chatEl.classList.add("hide");
+          chatEl.style.display = "none";
         }
-
-        // date/time bottom-right
-        updateLocalTime();
 
       }catch(e){}
     };
