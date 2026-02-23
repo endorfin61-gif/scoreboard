@@ -10,16 +10,12 @@
     h2{margin:0 0 10px 0}
     label{display:block;font-weight:900;margin:10px 0 6px}
     input[type="text"], input[type="url"]{
-      width:100%;padding:12px 12px;border-radius:12px;border:1px solid #d8dbe6;font-size:16px;
-      outline:none;
+      width:100%;padding:12px 12px;border-radius:12px;border:1px solid #d8dbe6;font-size:16px; outline:none;
     }
-    input[type="text"]:focus, input[type="url"]:focus{border-color:#7a86ff;box-shadow:0 0 0 4px rgba(122,134,255,.18);}
+    input:focus{border-color:#7a86ff;box-shadow:0 0 0 4px rgba(122,134,255,.18);}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .grow{flex:1 1 260px}
-    .btn{
-      padding:12px 14px;border-radius:14px;border:0;background:#111;color:#fff;font-weight:1000;font-size:16px;
-      cursor:pointer;
-    }
+    .btn{padding:12px 14px;border-radius:14px;border:0;background:#111;color:#fff;font-weight:1000;font-size:16px;cursor:pointer;}
     .btn.secondary{background:#4a4f64}
     .btn.danger{background:#b00020}
     .btn.ghost{background:#eef0f7;color:#111}
@@ -28,145 +24,141 @@
     .muted{color:#5a5f75;font-size:14px}
     .toggle{display:flex;gap:10px;align-items:center;margin-top:8px}
     input[type="color"]{width:56px;height:44px;border:0;background:transparent;padding:0}
-    .pill{
-      display:inline-flex;align-items:center;gap:10px;
-      background:#111;color:#fff;border-radius:999px;padding:8px 12px;font-weight:1000;font-size:13px;
-    }
+    .pill{display:inline-flex;align-items:center;gap:10px;background:#111;color:#fff;border-radius:999px;padding:8px 12px;font-weight:1000;font-size:13px;}
     .pill.ok{background:#0f7b3e}
     .pill.bad{background:#b00020}
     .sep{height:1px;background:#eceef6;margin:12px 0}
-    .mini{font-size:13px}
   </style>
 </head>
 <body>
 
-  <h2>Пульт управления табло</h2>
+<h2>Пульт управления табло</h2>
 
-  <div class="box">
-    <div class="muted">1) Вставь URL Google Apps Script (оканчивается на <b>/exec</b>) и нажми «Сохранить».</div>
-    <label>Apps Script URL</label>
-    <input id="api" type="url" placeholder="https://script.google.com/macros/s/.../exec">
-    <div class="row" style="margin-top:10px">
-      <button class="btn" onclick="saveApi()">Сохранить</button>
-      <span id="apiStatus" class="pill bad">не настроено</span>
-    </div>
-    <div class="muted mini" style="margin-top:8px">Подсказка: после сохранения, этот URL запомнится на телефоне.</div>
+<div class="box">
+  <div class="muted">1) Вставь URL Google Apps Script (оканчивается на <b>/exec</b>) и нажми «Сохранить».</div>
+  <label>Apps Script URL</label>
+  <input id="api" type="url" placeholder="https://script.google.com/macros/s/.../exec">
+  <div class="row" style="margin-top:10px">
+    <button class="btn" onclick="saveApi()">Сохранить</button>
+    <span id="apiStatus" class="pill bad">не настроено</span>
+    <button class="btn ghost" onclick="pull()">Прочитать состояние</button>
   </div>
+</div>
 
-  <div class="box">
-    <label>Заголовок (турнир)</label>
-    <input id="title" type="text" placeholder="Чемпионат Московской области">
-    <div class="row" style="margin-top:10px">
-      <button class="btn" onclick="pushBasics()">Обновить</button>
-      <button class="btn ghost" onclick="quickTitle('Первенство России')">Первенство России</button>
-      <button class="btn ghost" onclick="quickTitle('Чемпионат МО')">Чемпионат МО</button>
-    </div>
+<div class="box">
+  <label>Заголовок (турнир)</label>
+  <input id="title" type="text" placeholder="Чемпионат Московской области">
+  <div class="row" style="margin-top:10px">
+    <button class="btn" onclick="saveTitle()">Сохранить заголовок</button>
+    <button class="btn ghost" onclick="quickTitle('Первенство России')">Первенство России</button>
+    <button class="btn ghost" onclick="quickTitle('Чемпионат МО')">Чемпионат МО</button>
   </div>
+</div>
 
-  <div class="box">
-    <div class="row">
-      <button class="btn" onclick="setLive(true)">LIVE ON</button>
-      <button class="btn secondary" onclick="setLive(false)">LIVE OFF</button>
-      <button class="btn danger" onclick="setBreak()">ПЕРЕРЫВ</button>
-      <button class="btn secondary" onclick="clearStatus()">Снять статус</button>
-    </div>
-    <div class="muted" style="margin-top:8px">Кнопка «ПЕРЕРЫВ» сама поставит статус и (по умолчанию) скроет часы, оставив «ПЕРЕРЫВ».</div>
+<div class="box">
+  <div class="row">
+    <button class="btn" onclick="setLive(true)">LIVE ON</button>
+    <button class="btn secondary" onclick="setLive(false)">LIVE OFF</button>
+    <button class="btn danger" onclick="setBreak()">ПЕРЕРЫВ</button>
+    <button class="btn secondary" onclick="clearStatus()">Снять статус</button>
   </div>
+</div>
 
-  <div class="box">
-    <div class="row">
-      <div class="grow">
-        <label>Команда A</label>
-        <input id="nameA" type="text" placeholder="Команда A">
-      </div>
-      <div>
-        <label>Цвет A</label>
-        <input id="colorA" type="color" value="#1e88e5">
-      </div>
+<div class="box">
+  <div class="row">
+    <div class="grow">
+      <label>Команда A</label>
+      <input id="nameA" type="text" placeholder="Команда A">
     </div>
-    <label>Логотип A (URL PNG/SVG)</label>
-    <input id="logoA" type="url" placeholder="https://.../logoA.png">
-
-    <div class="sep"></div>
-
-    <div class="row">
-      <button class="btn big" onclick="score('A',-1)">A −</button>
-      <div class="score" id="scoreA">0</div>
-      <button class="btn big" onclick="score('A',+1)">A +</button>
-      <button class="btn ghost" onclick="setScore('A',0)">Сброс A</button>
+    <div>
+      <label>Цвет A</label>
+      <input id="colorA" type="color" value="#1e88e5">
     </div>
   </div>
+  <label>Логотип A (URL PNG/SVG)</label>
+  <input id="logoA" type="url" placeholder="https://.../logoA.png">
 
-  <div class="box">
-    <div class="row">
-      <div class="grow">
-        <label>Команда B</label>
-        <input id="nameB" type="text" placeholder="Команда B">
-      </div>
-      <div>
-        <label>Цвет B</label>
-        <input id="colorB" type="color" value="#e53935">
-      </div>
+  <div class="sep"></div>
+
+  <div class="row">
+    <button class="btn big" onclick="score('A',-1)">A −</button>
+    <div class="score" id="scoreA">0</div>
+    <button class="btn big" onclick="score('A',+1)">A +</button>
+    <button class="btn ghost" onclick="setScore('A',0)">Сброс A</button>
+  </div>
+</div>
+
+<div class="box">
+  <div class="row">
+    <div class="grow">
+      <label>Команда B</label>
+      <input id="nameB" type="text" placeholder="Команда B">
     </div>
-    <label>Логотип B (URL PNG/SVG)</label>
-    <input id="logoB" type="url" placeholder="https://.../logoB.png">
+    <div>
+      <label>Цвет B</label>
+      <input id="colorB" type="color" value="#e53935">
+    </div>
+  </div>
+  <label>Логотип B (URL PNG/SVG)</label>
+  <input id="logoB" type="url" placeholder="https://.../logoB.png">
 
-    <div class="sep"></div>
+  <div class="sep"></div>
 
-    <div class="row">
-      <button class="btn big" onclick="score('B',-1)">B −</button>
-      <div class="score" id="scoreB">0</div>
-      <button class="btn big" onclick="score('B',+1)">B +</button>
-      <button class="btn ghost" onclick="setScore('B',0)">Сброс B</button>
+  <div class="row">
+    <button class="btn big" onclick="score('B',-1)">B −</button>
+    <div class="score" id="scoreB">0</div>
+    <button class="btn big" onclick="score('B',+1)">B +</button>
+    <button class="btn ghost" onclick="setScore('B',0)">Сброс B</button>
+  </div>
+</div>
+
+<div class="box">
+  <div class="row">
+    <button class="btn" onclick="saveTeams()">СОХРАНИТЬ КОМАНДЫ (имена/цвета/логотипы)</button>
+    <button class="btn secondary" onclick="pull()">Проверить (прочитать)</button>
+  </div>
+  <div class="muted" style="margin-top:8px">
+    Сначала меняешь имена → жмёшь “СОХРАНИТЬ КОМАНДЫ”. Потом уже счёт.
+  </div>
+</div>
+
+<div class="box">
+  <div class="row">
+    <div class="grow">
+      <label>Тайм (текст)</label>
+      <input id="periodLabel" type="text" placeholder="1 тайм / 2 тайм / Перерыв / Доп. время">
+    </div>
+    <div class="toggle">
+      <input id="showPeriod" type="checkbox">
+      <label style="margin:0;font-weight:900">Показывать</label>
     </div>
   </div>
 
-  <div class="box">
-    <div class="row">
-      <div class="grow">
-        <label>Тайм (текст)</label>
-        <input id="periodLabel" type="text" placeholder="1 тайм / 2 тайм / Перерыв / Доп. время">
-      </div>
-      <div class="toggle">
-        <input id="showPeriod" type="checkbox" checked>
-        <label style="margin:0;font-weight:900">Показывать</label>
-      </div>
-    </div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn ghost" onclick="setPeriod('1 тайм')">1 тайм</button>
+    <button class="btn ghost" onclick="setPeriod('2 тайм')">2 тайм</button>
+    <button class="btn ghost" onclick="setPeriod('Доп. время')">Доп.</button>
+    <button class="btn secondary" onclick="savePeriod()">Сохранить тайм</button>
+  </div>
+</div>
 
-    <div class="row" style="margin-top:10px">
-      <button class="btn ghost" onclick="setPeriod('1 тайм')">1 тайм</button>
-      <button class="btn ghost" onclick="setPeriod('2 тайм')">2 тайм</button>
-      <button class="btn ghost" onclick="setPeriod('Доп. время')">Доп.</button>
-      <button class="btn secondary" onclick="pushBasics()">Обновить</button>
+<div class="box">
+  <div class="row">
+    <div class="toggle">
+      <input id="showClock" type="checkbox">
+      <label style="margin:0;font-weight:900">Показывать время</label>
     </div>
+    <span class="muted" id="clockInfo">—</span>
   </div>
 
-  <div class="box">
-    <div class="row">
-      <div class="toggle">
-        <input id="showClock" type="checkbox">
-        <label style="margin:0;font-weight:900">Показывать время</label>
-      </div>
-      <span class="muted">Таймер: старт / пауза / сброс</span>
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <button class="btn" onclick="clockStart()">Старт</button>
-      <button class="btn secondary" onclick="clockStop()">Пауза</button>
-      <button class="btn danger" onclick="clockReset()">Сброс</button>
-      <button class="btn ghost" onclick="showClock(false)">Скрыть</button>
-      <button class="btn ghost" onclick="showClock(true)">Показать</button>
-    </div>
-
-    <div class="muted" id="clockInfo" style="margin-top:8px">—</div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn" onclick="clockStart()">Старт</button>
+    <button class="btn secondary" onclick="clockStop()">Пауза</button>
+    <button class="btn danger" onclick="clockReset()">Сброс</button>
+    <button class="btn ghost" onclick="setShowClock(false)">Скрыть</button>
+    <button class="btn ghost" onclick="setShowClock(true)">Показать</button>
   </div>
-
-  <div class="box">
-    <div class="row">
-      <button class="btn danger" onclick="resetAll()">Сбросить всё (0:0)</button>
-      <button class="btn secondary" onclick="pull()">Обновить состояние</button>
-    </div>
-  </div>
+</div>
 
 <script>
   let API = "";
@@ -196,28 +188,22 @@
     API = v;
     setApiStatus(true);
     pull();
-    alert("Сохранено. Можно управлять табло.");
+    alert("Сохранено.");
   }
 
-  // --- Отправка патча БЕЗ CORS: GET ?action=set&payload=...
+  // Отправка патча без CORS: GET ?action=set&payload=...
   function sendPatch(patch){
     API = API || getApi();
     if(!API) return alert("Сначала вставь и сохрани Apps Script URL.");
     const payload = encodeURIComponent(JSON.stringify(patch));
     const url = API + "?action=set&payload=" + payload + "&t=" + Date.now();
-
-    // “тихая” отправка: Image()
     const img = new Image();
     img.src = url;
-
-    // обновим локально (на глаз) и подтянем через секунду
-    setTimeout(pull, 800);
   }
 
   async function pull(){
     API = API || getApi();
     if(!API) { setApiStatus(false); return; }
-
     document.getElementById("api").value = API;
     setApiStatus(true);
 
@@ -226,32 +212,22 @@
       state = await r.json();
       render();
     }catch(e){
-      // иногда fetch к apps script может капризничать; это не критично
+      // если fetch капризничает — не страшно, управление всё равно работает
     }
   }
 
-  function render(){
-    if(!state) return;
-
-    document.getElementById("title").value = state.title || "";
-    document.getElementById("nameA").value = state.teamA?.name || "";
-    document.getElementById("nameB").value = state.teamB?.name || "";
-    document.getElementById("colorA").value = state.teamA?.color || "#1e88e5";
-    document.getElementById("colorB").value = state.teamB?.color || "#e53935";
-    document.getElementById("logoA").value = state.teamA?.logo || "";
-    document.getElementById("logoB").value = state.teamB?.logo || "";
-
-    document.getElementById("scoreA").textContent = state.teamA?.score ?? 0;
-    document.getElementById("scoreB").textContent = state.teamB?.score ?? 0;
-
-    document.getElementById("showPeriod").checked = !!state.showPeriod;
-    document.getElementById("periodLabel").value = state.periodLabel || "";
-
-    document.getElementById("showClock").checked = !!state.showClock;
-
-    const c = state.clock || {};
-    document.getElementById("clockInfo").textContent =
-      (c.running ? "⏱️ идёт" : "⏸️ пауза") + " | накоплено: " + msToMMSS(c.baseMs||0);
+  function safeSetValue(id, value){
+    const el = document.getElementById(id);
+    if(!el) return;
+    // не перетираем поле, когда ты в нём печатаешь
+    if(document.activeElement === el) return;
+    el.value = value ?? "";
+  }
+  function safeSetChecked(id, value){
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(document.activeElement === el) return;
+    el.checked = !!value;
   }
 
   function msToMMSS(ms){
@@ -262,16 +238,45 @@
     return `${m}:${s}`;
   }
 
-  // --- Кнопки / действия
+  function render(){
+    if(!state) return;
 
-  function quickTitle(t){
-    document.getElementById("title").value = t;
-    pushBasics();
+    safeSetValue("title", state.title || "");
+    safeSetValue("nameA", state.teamA?.name || "");
+    safeSetValue("nameB", state.teamB?.name || "");
+    safeSetValue("logoA", state.teamA?.logo || "");
+    safeSetValue("logoB", state.teamB?.logo || "");
+
+    const colorA = document.getElementById("colorA");
+    if(colorA && document.activeElement !== colorA) colorA.value = state.teamA?.color || "#1e88e5";
+    const colorB = document.getElementById("colorB");
+    if(colorB && document.activeElement !== colorB) colorB.value = state.teamB?.color || "#e53935";
+
+    document.getElementById("scoreA").textContent = state.teamA?.score ?? 0;
+    document.getElementById("scoreB").textContent = state.teamB?.score ?? 0;
+
+    safeSetChecked("showPeriod", !!state.showPeriod);
+    safeSetValue("periodLabel", state.periodLabel || "");
+    safeSetChecked("showClock", !!state.showClock);
+
+    const c = state.clock || {};
+    document.getElementById("clockInfo").textContent =
+      (c.running ? "⏱️ идёт" : "⏸️ пауза") + " | " + msToMMSS(c.baseMs||0);
   }
 
-  function pushBasics(){
+  // --- Действия
+
+  function saveTitle(){
+    sendPatch({ title: document.getElementById("title").value.trim() });
+    setTimeout(pull, 600);
+  }
+  function quickTitle(t){
+    document.getElementById("title").value = t;
+    saveTitle();
+  }
+
+  function saveTeams(){
     sendPatch({
-      title: document.getElementById("title").value.trim(),
       teamA: {
         name: document.getElementById("nameA").value.trim(),
         color: document.getElementById("colorA").value,
@@ -281,11 +286,9 @@
         name: document.getElementById("nameB").value.trim(),
         color: document.getElementById("colorB").value,
         logo: document.getElementById("logoB").value.trim()
-      },
-      showPeriod: document.getElementById("showPeriod").checked,
-      periodLabel: document.getElementById("periodLabel").value.trim(),
-      showClock: document.getElementById("showClock").checked
+      }
     });
+    setTimeout(pull, 600);
   }
 
   function score(team, delta){
@@ -294,16 +297,12 @@
     const cur = state[key]?.score ?? 0;
     const next = Math.max(0, cur + delta);
 
-    // сохраняем также названия/цвета/лого (чтобы не забыть)
+    // ВАЖНО: меняем ТОЛЬКО счёт — чтобы не затирать названия!
     const patch = {};
-    patch[key] = {
-      score: next,
-      name: document.getElementById("name"+team).value.trim(),
-      color: document.getElementById("color"+team).value,
-      logo: document.getElementById("logo"+team).value.trim()
-    };
+    patch[key] = { score: next };
     sendPatch(patch);
-    // обновим локально мгновенно
+
+    // локально обновим цифру
     state[key].score = next;
     render();
   }
@@ -314,25 +313,19 @@
     const patch = {};
     patch[key] = { score: Math.max(0, value|0) };
     sendPatch(patch);
-  }
-
-  function setPeriod(text){
-    document.getElementById("periodLabel").value = text;
-    document.getElementById("showPeriod").checked = true;
-    sendPatch({ showPeriod: true, periodLabel: text, status: "LIVE", live: true });
+    state[key].score = Math.max(0, value|0);
+    render();
   }
 
   function setLive(v){
     sendPatch({ live: !!v, status: v ? "LIVE" : "" });
+    setTimeout(pull, 600);
   }
 
   function setBreak(){
-    // “перерыв” одной кнопкой: статус + выключить часы + включить тайм
-    // и поставить текст "ПЕРЕРЫВ"
-    // + поставить live true (обычно в эфире остаётся)
-    // + если таймер шёл — остановить и зафиксировать baseMs (это делает Apps Script merge, но мы сохраняем clock отдельно)
+    // статус + тайм "ПЕРЕРЫВ" + скрыть часы
+    // если таймер шёл — останавливаем и фиксируем baseMs
     if(!state) return pull();
-
     const c = state.clock || {};
     const patch = {
       status: "ПЕРЕРЫВ",
@@ -341,30 +334,45 @@
       showPeriod: true,
       periodLabel: "ПЕРЕРЫВ"
     };
-
-    // если таймер шёл — останавливаем, фиксируя накопленное
     if(c.running){
       const base = (c.baseMs||0) + (Date.now() - (c.startTs||Date.now()));
       patch.clock = { running:false, startTs:null, baseMs: base };
     }
-
     sendPatch(patch);
+    setTimeout(pull, 600);
   }
 
   function clearStatus(){
     sendPatch({ status: "" });
+    setTimeout(pull, 600);
   }
 
-  function showClock(v){
+  function setPeriod(text){
+    document.getElementById("periodLabel").value = text;
+    document.getElementById("showPeriod").checked = true;
+    savePeriod();
+  }
+
+  function savePeriod(){
+    sendPatch({
+      showPeriod: document.getElementById("showPeriod").checked,
+      periodLabel: document.getElementById("periodLabel").value.trim()
+    });
+    setTimeout(pull, 600);
+  }
+
+  function setShowClock(v){
     document.getElementById("showClock").checked = !!v;
     sendPatch({ showClock: !!v });
+    setTimeout(pull, 600);
   }
 
   function clockStart(){
     if(!state) return pull();
     const c = state.clock || {};
     if(c.running) return;
-    sendPatch({ showClock: true, clock: { running:true, startTs: Date.now() }, status:"LIVE", live:true });
+    sendPatch({ showClock:true, clock:{ running:true, startTs: Date.now() }, status:"LIVE", live:true });
+    setTimeout(pull, 600);
   }
 
   function clockStop(){
@@ -372,25 +380,13 @@
     const c = state.clock || {};
     if(!c.running) return;
     const base = (c.baseMs||0) + (Date.now() - (c.startTs||Date.now()));
-    sendPatch({ clock: { running:false, startTs:null, baseMs: base } });
+    sendPatch({ clock:{ running:false, startTs:null, baseMs: base } });
+    setTimeout(pull, 600);
   }
 
   function clockReset(){
-    sendPatch({ clock: { running:false, startTs:null, baseMs: 0 } });
-  }
-
-  function resetAll(){
-    sendPatch({
-      title: "Чемпионат Московской области",
-      status: "LIVE",
-      live: true,
-      teamA: { score: 0 },
-      teamB: { score: 0 },
-      showClock: false,
-      showPeriod: false,
-      periodLabel: "1 тайм",
-      clock: { running:false, startTs:null, baseMs: 0 }
-    });
+    sendPatch({ clock:{ running:false, startTs:null, baseMs: 0 } });
+    setTimeout(pull, 600);
   }
 
   // init
@@ -399,10 +395,8 @@
     document.getElementById("api").value = API;
     setApiStatus(!!API);
     pull();
-    // setInterval(pull, 2000);
   })();
 </script>
 
 </body>
-
 </html>
