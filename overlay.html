@@ -218,25 +218,27 @@
       <div id="seasonBadge" class="badge" style="display:none">2025–2026</div>
     </div>
 
-    <div class="row">
-      <div class="team">
-        <div id="barA" class="bar" style="background:#1e88e5"></div>
-        <div class="logoWrap" id="logoWrapA" style="display:none">
-          <img id="logoA" class="logo" alt="">
-        </div>
-        <div id="nameA" class="name">Команда A</div>
-        <div id="scoreA" class="score">0</div>
-      </div>
-
-      <div class="team">
-        <div id="barB" class="bar" style="background:#e53935"></div>
-        <div class="logoWrap" id="logoWrapB" style="display:none">
-          <img id="logoB" class="logo" alt="">
-        </div>
-        <div id="nameB" class="name">Команда B</div>
-        <div id="scoreB" class="score">0</div>
-      </div>
+    <div class="scorebar">
+  <div class="side left">
+    <div class="bar" id="barA"></div>
+    <div class="logoWrap" id="logoWrapA" style="display:none">
+      <img id="logoA" class="logo" alt="">
     </div>
+    <div id="nameA" class="name">Команда A</div>
+    <div id="scoreA" class="score">0</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="side right">
+    <div id="scoreB" class="score">0</div>
+    <div id="nameB" class="name rightName">Команда B</div>
+    <div class="logoWrap" id="logoWrapB" style="display:none">
+      <img id="logoB" class="logo" alt="">
+    </div>
+    <div class="bar" id="barB"></div>
+  </div>
+</div>
 
     <div class="meta">
       <div id="status" class="pill status" style="display:none"></div>
@@ -429,3 +431,4 @@
 </body>
 
 </html>
+
