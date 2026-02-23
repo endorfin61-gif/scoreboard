@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Score Overlay</title>
+<style>
+body{margin:0;background:transparent;font-family:Arial;}
+.wrap{position:fixed;top:20px;left:50%;transform:translateX(-50%);}
+.title{background:rgba(0,0,0,.7);color:#fff;padding:8px 16px;border-radius:12px;font-size:22px;text-align:center;margin-bottom:8px;}
+.row{display:flex;gap:8px;}
+.team{display:flex;align-items:center;background:rgba(0,0,0,.7);border-radius:14px;color:#fff;}
+.bar{width:8px;}
+.logo{width:40px;height:40px;border-radius:50%;margin:8px;}
+.name{font-size:22px;font-weight:bold;padding:0 10px;}
+.score{font-size:36px;font-weight:bold;padding:0 14px;}
+.live{background:red;color:white;padding:6px 12px;border-radius:20px;font-weight:bold;margin-left:10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="title" id="title">Чемпионат</div>
+<div class="row">
+<div class="team">
+<div class="bar" id="barA"></div>
+<img id="logoA" class="logo" style="display:none;">
+<div class="name" id="nameA">A</div>
+<div class="score" id="scoreA">0</div>
+</div>
+<div class="team">
+<div class="bar" id="barB"></div>
+<img id="logoB" class="logo" style="display:none;">
+<div class="name" id="nameB">B</div>
+<div class="score" id="scoreB">0</div>
+</div>
+</div>
+</div>
+
+<script>
+const API_URL="ВСТАВЬ_СЮДА_СВОЙ_APPS_SCRIPT_URL";
+
+async function update(){
+try{
+let r=await fetch(API_URL);
+let s=await r.json();
+document.getElementById("title").textContent=s.title;
+document.getElementById("nameA").textContent=s.teamA.name;
+document.getElementById("nameB").textContent=s.teamB.name;
+document.getElementById("scoreA").textContent=s.teamA.score;
+document.getElementById("scoreB").textContent=s.teamB.score;
+document.getElementById("barA").style.background=s.teamA.color;
+document.getElementById("barB").style.background=s.teamB.color;
+if(s.teamA.logo){logoA.src=s.teamA.logo;logoA.style.display="block";}
+if(s.teamB.logo){logoB.src=s.teamB.logo;logoB.style.display="block";}
+}catch(e){}
+setTimeout(update,1000);
+}
+update();
+</script>
+
+</body>
+</html>

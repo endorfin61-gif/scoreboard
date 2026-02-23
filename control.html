@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Score Control</title>
+<style>
+body{font-family:Arial;padding:20px;}
+input,button{padding:10px;margin:5px;font-size:16px;}
+button{cursor:pointer;}
+</style>
+</head>
+<body>
+
+<h2>Пульт управления</h2>
+
+<input id="api" placeholder="Вставь Apps Script URL"><br>
+<button onclick="save()">Сохранить API</button>
+
+<h3>Заголовок</h3>
+<input id="title"><button onclick="setTitle()">Обновить</button>
+
+<h3>Команда A</h3>
+<input id="nameA" placeholder="Название">
+<input id="colorA" type="color" value="#1e88e5">
+<input id="logoA" placeholder="URL логотипа">
+<button onclick="score('A',1)">+1</button>
+<button onclick="score('A',-1)">-1</button>
+
+<h3>Команда B</h3>
+<input id="nameB" placeholder="Название">
+<input id="colorB" type="color" value="#e53935">
+<input id="logoB" placeholder="URL логотипа">
+<button onclick="score('B',1)">+1</button>
+<button onclick="score('B',-1)">-1</button>
+
+<script>
+let API="";
+
+function save(){
+API=document.getElementById("api").value;
+localStorage.setItem("api",API);
+alert("Сохранено");
+}
+
+async function post(data){
+await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+}
+
+function setTitle(){
+post({title:document.getElementById("title").value});
+}
+
+function score(team,val){
+let key=team==="A"?"teamA":"teamB";
+fetch(API).then(r=>r.json()).then(s=>{
+let newScore=s[key].score+val;
+if(newScore<0)newScore=0;
+post({[key]:{score:newScore,name:document.getElementById("name"+team).value,color:document.getElementById("color"+team).value,logo:document.getElementById("logo"+team).value}});
+});
+}
+</script>
+
+</body>
+</html>
