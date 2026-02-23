@@ -380,10 +380,15 @@
         period.style.display = s.showPeriod ? "" : "none";
         period.textContent = s.periodLabel || "";
 
-        // clock (показываем накопленное baseMs; старт/пауза — через пульт)
+        // clock (реально идёт, если running=true)
         const clock = document.getElementById("clock");
         clock.style.display = s.showClock ? "" : "none";
-        const ms = s.clock?.baseMs || 0;
+
+        let ms = (s.clock?.baseMs || 0);
+        if (s.clock?.running && s.clock?.startTs) {
+        ms += (Date.now() - s.clock.startTs);
+        }
+
         const t = Math.floor(ms/1000);
         const mm = String(Math.floor(t/60)).padStart(2,'0');
         const ss = String(t%60).padStart(2,'0');
@@ -422,4 +427,5 @@
     poll();
   </script>
 </body>
+
 </html>
