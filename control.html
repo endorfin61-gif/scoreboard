@@ -30,6 +30,9 @@
     .sep{height:1px;background:#eceef6;margin:12px 0}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     @media(max-width:900px){.grid2{grid-template-columns:1fr}}
+    .small{font-size:13px}
+    .teamButtons{display:flex;flex-wrap:wrap;gap:10px}
+    .teamButtons .btn{white-space:nowrap}
   </style>
 </head>
 <body>
@@ -44,6 +47,10 @@
     <button class="btn" onclick="saveApi()">Сохранить</button>
     <span id="apiStatus" class="pill bad">не настроено</span>
     <button class="btn ghost" onclick="pull()">Прочитать состояние</button>
+    <span class="pill secondary" id="nowTz">—</span>
+  </div>
+  <div class="muted small" style="margin-top:8px">
+    Справа показывается <b>текущее время в выбранном часовом поясе</b> (для контроля).
   </div>
 </div>
 
@@ -59,6 +66,9 @@
     <button class="btn ghost" onclick="quickTitle('Чемпионат России')">Чемпионат России</button>
     <button class="btn ghost" onclick="quickTitle('Кубок Патриарха')">Кубок Патриарха</button>
     <button class="btn ghost" onclick="quickTitle('Турнир памяти')">Турнир памяти</button>
+
+    <button class="btn ghost" onclick="quickTitle('Товарищеская встреча')">Товарищеская</button>
+    <button class="btn ghost" onclick="quickTitle('Игровая тренировка')">Игровая тренировка</button>
   </div>
 </div>
 
@@ -77,13 +87,16 @@
   <div>
     <label>Часовой пояс (для “реального местного времени”)</label>
     <input id="timeZone" type="text" value="Europe/Moscow">
-    <div class="muted" style="margin-top:8px">
-      Обычно достаточно <b>Europe/Moscow</b>. Можно заменить на любой IANA TZ.
-    </div>
     <div class="row" style="margin-top:10px">
       <button class="btn" onclick="saveTimeZone()">Сохранить TZ</button>
       <button class="btn ghost" onclick="setTZ('Europe/Moscow')">Москва</button>
-      <button class="btn ghost" onclick="setTZ('Europe/Amsterdam')">Амстердам</button>
+      <button class="btn ghost" onclick="setTZ('Asia/Yekaterinburg')">Екатеринбург</button>
+      <button class="btn ghost" onclick="setTZ('Asia/Krasnoyarsk')">Красноярск</button>
+      <button class="btn ghost" onclick="setTZ('Asia/Irkutsk')">Иркутск</button>
+      <button class="btn ghost" onclick="setTZ('Europe/Kirov')">Киров</button>
+    </div>
+    <div class="muted small" style="margin-top:8px">
+      Если стадион в другом регионе — выбирай TZ и в оверлее справа снизу будет правильное местное время.
     </div>
   </div>
 </div>
@@ -118,7 +131,7 @@
       <button class="btn" onclick="saveBrand()">Сохранить логотип</button>
       <button class="btn secondary" onclick="hideBrand()">Скрыть</button>
     </div>
-    <div class="muted" style="margin-top:8px">Лучше PNG 512×512 с прозрачным фоном.</div>
+    <div class="muted small" style="margin-top:8px">Лучше PNG 512×512 с прозрачным фоном.</div>
   </div>
 </div>
 
@@ -132,9 +145,6 @@
     <button class="btn ghost" onclick="clearStatus()">Снять статус</button>
 
     <button class="btn danger" onclick="swapTeams()">ПОМЕНЯТЬ КОМАНДЫ МЕСТАМИ</button>
-  </div>
-  <div class="muted" style="margin-top:8px">
-    “Поменять команды” — меняет левую/правую сторону целиком (вместе со счётом и логотипом), удобно на 2-й тайм.
   </div>
 </div>
 
@@ -176,6 +186,103 @@
   <div class="row">
     <button class="btn" onclick="saveTeams()">СОХРАНИТЬ КОМАНДЫ (имя/цвет/лого)</button>
     <button class="btn ghost" onclick="pull()">Проверить (прочитать)</button>
+  </div>
+</div>
+
+<div class="box">
+  <label>Готовые кнопки команд (подставляют имя+логотип+цвет и сохраняют)</label>
+  <div class="teamButtons">
+    <!-- Нажимаешь: Команда → A или → B -->
+    <button class="btn ghost" onclick="applyPreset('A','Зоркий девочки')">Зоркий девочки → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Зоркий девочки')">Зоркий девочки → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Зоркий 2015')">Зоркий 2015 → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Зоркий 2015')">Зоркий 2015 → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Зоркий 2014')">Зоркий 2014 → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Зоркий 2014')">Зоркий 2014 → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Зоркий 2013')">Зоркий 2013 → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Зоркий 2013')">Зоркий 2013 → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Зоркий 2012')">Зоркий 2012 → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Зоркий 2012')">Зоркий 2012 → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Зоркий 2011')">Зоркий 2011 → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Зоркий 2011')">Зоркий 2011 → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Зоркий 2010')">Зоркий 2010 → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Зоркий 2010')">Зоркий 2010 → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Зоркий 2009')">Зоркий 2009 → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Зоркий 2009')">Зоркий 2009 → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Зоркий Красногорск')">Зоркий КГ → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Зоркий Красногорск')">Зоркий КГ → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Зенит Иркутск')">Зенит → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Зенит Иркутск')">Зенит → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Всеволожск')">Всеволожск → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Всеволожск')">Всеволожск → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Сб. Ленинградской области')">Сб. Лен обл → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Сб. Ленинградской области')">Сб. Лен обл → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Водник Архангельск')">Водник → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Водник Архангельск')">Водник → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Вымпел Королёв')">Вымпел → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Вымпел Королёв')">Вымпел → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Сб. Свердловской области')">Сб. Свердл обл → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Сб. Свердловской области')">Сб. Свердл обл → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Строитель Сыктывкар')">Строитель → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Строитель Сыктывкар')">Строитель → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','СКА Хабаровск')">СКА → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','СКА Хабаровск')">СКА → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Сибскана Иркутск')">Сибскана → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Сибскана Иркутск')">Сибскана → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Сибскана-2 Иркутск')">Сибскана-2 → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Сибскана-2 Иркутск')">Сибскана-2 → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Русич Ликино-Дулево')">Русич → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Русич Ликино-Дулево')">Русич → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Родина Киров')">Родина → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Родина Киров')">Родина → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Обухово')">Обухово → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Обухово')">Обухово → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Сб. Мурманской области')">Сб. Мурманск → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Сб. Мурманской области')">Сб. Мурманск → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Сб. Московской области')">Сб. МО → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Сб. Московской области')">Сб. МО → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Кузбасс Кемерово')">Кузбасс → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Кузбасс Кемерово')">Кузбасс → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Енисей Красноярск')">Енисей → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Енисей Красноярск')">Енисей → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Динамо Москва')">Динамо → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Динамо Москва')">Динамо → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Балашиха')">Балашиха → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Балашиха')">Балашиха → B</button>
+
+    <button class="btn ghost" onclick="applyPreset('A','Филимоново')">Филимоново → A</button>
+    <button class="btn ghost" onclick="applyPreset('B','Филимоново')">Филимоново → B</button>
+  </div>
+
+  <div class="muted small" style="margin-top:10px">
+    Лого берутся из <b>/assets/&lt;имя_файла&gt;.png</b>. Если у тебя расширение другое — поменяй в JS константу <b>LOGO_EXT</b>.
   </div>
 </div>
 
@@ -238,15 +345,64 @@
   let API = "";
   let state = null;
 
+  // Где лежат логотипы: /assets/<file>.png
+  const LOGO_EXT = ".png";
+  const LOGO_BASE = "https://endorfin61-gif.github.io/scoreboard/assets/";
+
+  const TEAM_PRESETS = {
+    "Зоркий девочки":               { name:"Зоркий девочки",                 file:"zorkiy_dev",   color:"#1e88e5" },
+    "Зоркий 2015":                  { name:"Зоркий 2015",                    file:"zorkiy_2015",  color:"#1e88e5" },
+    "Зоркий 2014":                  { name:"Зоркий 2014",                    file:"zorkiy_2014",  color:"#1e88e5" },
+    "Зоркий 2013":                  { name:"Зоркий 2013",                    file:"zorkiy_2013",  color:"#1e88e5" },
+    "Зоркий 2012":                  { name:"Зоркий 2012",                    file:"zorkiy_2012",  color:"#1e88e5" },
+    "Зоркий 2011":                  { name:"Зоркий 2011",                    file:"zorkiy_2011",  color:"#1e88e5" },
+    "Зоркий 2010":                  { name:"Зоркий 2010",                    file:"zorkiy_2010",  color:"#1e88e5" },
+    "Зоркий 2009":                  { name:"Зоркий 2009",                    file:"zorkiy_2009",  color:"#1e88e5" },
+    "Зоркий Красногорск":           { name:"Зоркий Красногорск",             file:"zorkiy",       color:"#1e88e5" }, /* поменяй file если нужно */
+
+    "Зенит Иркутск":                { name:"Зенит Иркутск",                  file:"zenit",        color:"#1e88e5" },
+    "Всеволожск":                   { name:"Всеволожск",                     file:"vsevolozhsk",  color:"#4a4f64" },
+    "Сб. Ленинградской области":    { name:"Сб. Ленинградской области",      file:"sb_len_obl",   color:"#4a4f64" },
+    "Водник Архангельск":           { name:"Водник Архангельск",             file:"vodnik",       color:"#f4b400" },
+    "Вымпел Королёв":               { name:"Вымпел Королёв",                 file:"vimpel",       color:"#4a4f64" },
+    "Сб. Свердловской области":     { name:"Сб. Свердловской области",       file:"svrdlobl",     color:"#4a4f64" },
+    "Строитель Сыктывкар":          { name:"Строитель Сыктывкар",            file:"stroitel",     color:"#4a4f64" },
+    "СКА Хабаровск":                { name:"СКА Хабаровск",                  file:"ska",          color:"#b00020" },
+    "Сибскана Иркутск":             { name:"Сибскана Иркутск",               file:"sibskana",     color:"#1e88e5" },
+    "Сибскана-2 Иркутск":           { name:"Сибскана-2 Иркутск",             file:"sibskana2",    color:"#1e88e5" },
+    "Русич Ликино-Дулево":          { name:"Русич Ликино-Дулево",            file:"rusich",       color:"#4a4f64" },
+    "Родина Киров":                 { name:"Родина Киров",                   file:"rodina",       color:"#4a4f64" },
+    "Обухово":                      { name:"Обухово",                        file:"obukhovo",     color:"#4a4f64" },
+    "Сб. Мурманской области":       { name:"Сб. Мурманской области",         file:"murmanskobl",  color:"#4a4f64" },
+    "Сб. Московской области":       { name:"Сб. Московской области",         file:"mosobl",       color:"#4a4f64" },
+    "Кузбасс Кемерово":             { name:"Кузбасс Кемерово",               file:"kuzbass",      color:"#4a4f64" },
+    "Енисей Красноярск":            { name:"Енисей Красноярск",              file:"enisey",       color:"#b00020" },
+    "Динамо Москва":                { name:"Динамо Москва",                  file:"dinamo",       color:"#1e88e5" },
+    "Балашиха":                     { name:"Балашиха",                       file:"Balashikha",   color:"#4a4f64" },
+    "Филимоново":                   { name:"Филимоново",                     file:"filimonovo",   color:"#4a4f64" }
+  };
+
+  function presetLogoUrl(file){
+    return (file && file.trim()) ? (LOGO_BASE + file.trim() + LOGO_EXT) : "";
+  }
+
+  function applyPreset(teamLetter, presetName){
+    const p = TEAM_PRESETS[presetName];
+    if(!p) return alert("Не найден пресет: " + presetName);
+
+    document.getElementById("name"+teamLetter).value = p.name;
+    document.getElementById("color"+teamLetter).value = p.color || (teamLetter === "A" ? "#1e88e5" : "#e53935");
+    document.getElementById("logo"+teamLetter).value = presetLogoUrl(p.file);
+
+    saveTeams();
+  }
+
   function getApi(){ return localStorage.getItem("SCORE_API") || ""; }
 
   function setApiStatus(ok){
     const el = document.getElementById("apiStatus");
-    if(ok){
-      el.textContent = "готово"; el.classList.remove("bad"); el.classList.add("ok");
-    }else{
-      el.textContent = "не настроено"; el.classList.remove("ok"); el.classList.add("bad");
-    }
+    if(ok){ el.textContent = "готово"; el.classList.remove("bad"); el.classList.add("ok"); }
+    else { el.textContent = "не настроено"; el.classList.remove("ok"); el.classList.add("bad"); }
   }
 
   function saveApi(){
@@ -330,37 +486,60 @@
     // clock
     safeSetChecked("showClock", !!state.showClock);
     const c = state.clock || {};
-    document.getElementById("clockInfo").textContent = (c.running ? "⏱️ идёт" : "⏸️ пауза") + " | " + msToMMSS(c.baseMs||0);
+    document.getElementById("clockInfo").textContent =
+      (c.running ? "⏱️ идёт" : "⏸️ пауза") + " | " + msToMMSS(c.baseMs||0);
 
-    // date/time
+    // date/time + brand
     safeSetChecked("showDateTime", !!state.showDateTime);
     safeSetValue("eventDate", state.eventDate || "");
-
-    // brand logo
     safeSetChecked("showBrandLogo", !!state.showBrandLogo);
     safeSetValue("brandLogo", state.brandLogo || "");
+
+    // update pill time (local time in selected tz)
+    updateNowTz();
   }
 
+  // ---- live clock in control (selected tz)
+  function updateNowTz(){
+    const tz = (document.getElementById("timeZone").value || "Europe/Moscow").trim();
+    try{
+      const now = new Date();
+      const timeText = new Intl.DateTimeFormat("ru-RU", {
+        timeZone: tz,
+        hour: "2-digit", minute: "2-digit", second: "2-digit"
+      }).format(now);
+      document.getElementById("nowTz").textContent = tz + " • " + timeText;
+    }catch(e){
+      document.getElementById("nowTz").textContent = tz;
+    }
+  }
+  setInterval(updateNowTz, 500);
+
   // ---------- Tournament / Title ----------
-  function saveTitle(){ sendPatch({ title: document.getElementById("title").value.trim() }); setTimeout(pull, 500); }
+  function saveTitle(){ sendPatch({ title: document.getElementById("title").value.trim() }); setTimeout(pull, 450); }
   function quickTitle(t){ document.getElementById("title").value = t; saveTitle(); }
 
   // ---------- Season / TZ ----------
-  function saveSeason(){ sendPatch({ season: document.getElementById("season").value.trim() }); setTimeout(pull, 500); }
+  function saveSeason(){ sendPatch({ season: document.getElementById("season").value.trim() }); setTimeout(pull, 450); }
   function setSeason(s){ document.getElementById("season").value = s; saveSeason(); }
-  function saveTimeZone(){ sendPatch({ timeZone: document.getElementById("timeZone").value.trim() || "Europe/Moscow" }); setTimeout(pull, 500); }
+
+  function saveTimeZone(){
+    const tz = document.getElementById("timeZone").value.trim() || "Europe/Moscow";
+    sendPatch({ timeZone: tz });
+    setTimeout(pull, 450);
+  }
   function setTZ(tz){ document.getElementById("timeZone").value = tz; saveTimeZone(); }
 
   // ---------- Date/Time ----------
-  function saveEventDate(){ sendPatch({ eventDate: document.getElementById("eventDate").value }); setTimeout(pull, 500); }
-  function clearEventDate(){ document.getElementById("eventDate").value = ""; sendPatch({ eventDate: "" }); setTimeout(pull, 500); }
-  function saveShowDateTime(){ sendPatch({ showDateTime: document.getElementById("showDateTime").checked }); setTimeout(pull, 500); }
+  function saveEventDate(){ sendPatch({ eventDate: document.getElementById("eventDate").value }); setTimeout(pull, 450); }
+  function clearEventDate(){ document.getElementById("eventDate").value = ""; sendPatch({ eventDate: "" }); setTimeout(pull, 450); }
+  function saveShowDateTime(){ sendPatch({ showDateTime: document.getElementById("showDateTime").checked }); setTimeout(pull, 450); }
   function setToday(){
     const d = new Date();
     const iso = d.toISOString().slice(0,10);
     document.getElementById("eventDate").value = iso;
     sendPatch({ eventDate: iso, showDateTime: true });
-    setTimeout(pull, 500);
+    setTimeout(pull, 450);
   }
 
   // ---------- Brand ----------
@@ -369,16 +548,15 @@
       brandLogo: document.getElementById("brandLogo").value.trim(),
       showBrandLogo: document.getElementById("showBrandLogo").checked
     });
-    setTimeout(pull, 500);
+    setTimeout(pull, 450);
   }
-  function hideBrand(){ document.getElementById("showBrandLogo").checked = false; sendPatch({ showBrandLogo:false }); setTimeout(pull, 500); }
+  function hideBrand(){ document.getElementById("showBrandLogo").checked = false; sendPatch({ showBrandLogo:false }); setTimeout(pull, 450); }
 
   // ---------- Teams ----------
   function saveTeams(){
     const aName = document.getElementById("nameA").value.trim();
     const bName = document.getElementById("nameB").value.trim();
 
-    // локально запомним — чтобы пульт всегда показывал имена
     localStorage.setItem("TEAM_A_NAME", aName);
     localStorage.setItem("TEAM_B_NAME", bName);
 
@@ -386,7 +564,7 @@
       teamA: { name: aName, color: document.getElementById("colorA").value, logo: document.getElementById("logoA").value.trim() },
       teamB: { name: bName, color: document.getElementById("colorB").value, logo: document.getElementById("logoB").value.trim() }
     });
-    setTimeout(pull, 500);
+    setTimeout(pull, 450);
   }
 
   function swapTeams(){
@@ -394,7 +572,7 @@
     const nextA = state.teamB || {};
     const nextB = state.teamA || {};
     sendPatch({ teamA: nextA, teamB: nextB });
-    setTimeout(pull, 500);
+    setTimeout(pull, 450);
   }
 
   // ---------- Score ----------
@@ -411,13 +589,13 @@
 
   function resetScores(){
     sendPatch({ teamA:{ score:0 }, teamB:{ score:0 } });
-    setTimeout(pull, 500);
+    setTimeout(pull, 450);
   }
 
   // ---------- LIVE / Status / Break ----------
-  function setLive(v){ sendPatch({ live: !!v, status: v ? "LIVE" : "" }); setTimeout(pull, 500); }
-  function setStatus(t){ sendPatch({ status: (t||"").trim(), live:true }); setTimeout(pull, 500); }
-  function clearStatus(){ sendPatch({ status: "" }); setTimeout(pull, 500); }
+  function setLive(v){ sendPatch({ live: !!v, status: v ? "LIVE" : "" }); setTimeout(pull, 450); }
+  function setStatus(t){ sendPatch({ status: (t||"").trim(), live:true }); setTimeout(pull, 450); }
+  function clearStatus(){ sendPatch({ status: "" }); setTimeout(pull, 450); }
 
   function setBreak(){
     if(!state) return pull();
@@ -428,7 +606,7 @@
       patch.clock = { running:false, startTs:null, baseMs: base };
     }
     sendPatch(patch);
-    setTimeout(pull, 500);
+    setTimeout(pull, 450);
   }
 
   // ---------- Period ----------
@@ -439,19 +617,19 @@
   }
   function savePeriod(){
     sendPatch({ showPeriod: document.getElementById("showPeriod").checked, periodLabel: document.getElementById("periodLabel").value.trim() });
-    setTimeout(pull, 500);
+    setTimeout(pull, 450);
   }
   function hidePeriod(){ document.getElementById("showPeriod").checked = false; savePeriod(); }
 
   // ---------- Clock ----------
-  function setShowClock(v){ document.getElementById("showClock").checked = !!v; sendPatch({ showClock: !!v }); setTimeout(pull, 500); }
+  function setShowClock(v){ document.getElementById("showClock").checked = !!v; sendPatch({ showClock: !!v }); setTimeout(pull, 450); }
 
   function clockStart(){
     if(!state) return pull();
     const c = state.clock || {};
     if(c.running) return;
     sendPatch({ showClock:true, clock:{ running:true, startTs: Date.now() }, status:"LIVE", live:true });
-    setTimeout(pull, 500);
+    setTimeout(pull, 450);
   }
 
   function clockStop(){
@@ -460,12 +638,12 @@
     if(!c.running) return;
     const base = (c.baseMs||0) + (Date.now() - (c.startTs||Date.now()));
     sendPatch({ clock:{ running:false, startTs:null, baseMs: base } });
-    setTimeout(pull, 500);
+    setTimeout(pull, 450);
   }
 
   function clockReset(){
     sendPatch({ clock:{ running:false, startTs:null, baseMs: 0 } });
-    setTimeout(pull, 500);
+    setTimeout(pull, 450);
   }
 
   // init
@@ -474,12 +652,12 @@
     document.getElementById("api").value = API;
     setApiStatus(!!API);
 
-    // восстановим имена команд для удобства
     const a = localStorage.getItem("TEAM_A_NAME");
     const b = localStorage.getItem("TEAM_B_NAME");
     if(a) document.getElementById("nameA").value = a;
     if(b) document.getElementById("nameB").value = b;
 
+    updateNowTz();
     pull();
   })();
 </script>
