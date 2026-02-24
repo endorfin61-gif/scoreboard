@@ -210,22 +210,28 @@
     }
 
     .meta{
+      position:absolute;
+      left:50%;
+      transform: translateX(-50%);
+      top: 66px;
       display:flex;
-      gap:10px;
+      gap:8px;
       justify-content:center;
-      margin-top:10px;
+      margin-top:0;
+      z-index: 10050;
+      pointer-events:none;
     }
     .pill{
       color: var(--fg);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
       background-color: var(--glass);
-      padding: 9px 14px;
-      border-radius: 16px;
-      font-size: 22px;
+      padding: 6px 10px;
+      border-radius: 14px;
+      font-size: 18px;
       font-weight: 950;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 14px 40px rgba(0,0,0,.18);
+      box-shadow: 0 12px 34px rgba(0,0,0,.18);
       white-space: nowrap;
     }
     .pill.status{
@@ -469,6 +475,11 @@
       <div id="seasonBadge" class="badge" style="display:none">2025–2026</div>
     </div>
 
+
+    <div class="meta">
+      <div id="status" class="pill status" style="display:none"></div>
+      
+
     <!-- Requested left-to-right layout -->
     <div class="scorebar">
       <div class="side left">
@@ -495,10 +506,7 @@
         <div class="bar" id="barB" style="background:#e53935"></div>
       </div>
     </div>
-
-    <div class="meta">
-      <div id="status" class="pill status" style="display:none"></div>
-      <div id="period" class="pill" style="display:none"></div>
+<div id="period" class="pill" style="display:none"></div>
       <div id="clock" class="pill" style="display:none"></div>
     </div>
   </div>
