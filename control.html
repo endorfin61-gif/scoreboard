@@ -74,35 +74,6 @@
 
 <div class="box grid2">
   <div>
-    <label>Сезон (бейдж сверху рядом с LIVE)</label>
-    <input id="season" type="text" placeholder="2025–2026">
-    <div class="row" style="margin-top:10px">
-      <button class="btn" onclick="saveSeason()">Сохранить сезон</button>
-      <button class="btn ghost" onclick="setSeason('2025–2026')">2025–2026</button>
-      <button class="btn ghost" onclick="setSeason('2026–2027')">2026–2027</button>
-      <button class="btn secondary" onclick="setSeason('')">Скрыть</button>
-    </div>
-  </div>
-
-  <div>
-    <label>Часовой пояс (для “реального местного времени”)</label>
-    <input id="timeZone" type="text" value="Europe/Moscow">
-    <div class="row" style="margin-top:10px">
-      <button class="btn" onclick="saveTimeZone()">Сохранить TZ</button>
-      <button class="btn ghost" onclick="setTZ('Europe/Moscow')">Москва</button>
-      <button class="btn ghost" onclick="setTZ('Asia/Yekaterinburg')">Екатеринбург</button>
-      <button class="btn ghost" onclick="setTZ('Asia/Krasnoyarsk')">Красноярск</button>
-      <button class="btn ghost" onclick="setTZ('Asia/Irkutsk')">Иркутск</button>
-      <button class="btn ghost" onclick="setTZ('Europe/Kirov')">Киров</button>
-    </div>
-    <div class="muted small" style="margin-top:8px">
-      Если стадион в другом регионе — выбирай TZ и в оверлее справа снизу будет правильное местное время.
-    </div>
-  </div>
-</div>
-
-<div class="box grid2">
-  <div>
     <label>Дата проведения (внизу справа)</label>
     <input id="eventDate" type="date">
     <div class="row" style="margin-top:10px">
@@ -129,6 +100,7 @@
     </div>
     <div class="row" style="margin-top:10px">
       <button class="btn" onclick="saveBrand()">Сохранить логотип</button>
+      <button class="btn ghost" onclick="setBrandVK()">VK группа</button>
       <button class="btn secondary" onclick="hideBrand()">Скрыть</button>
     </div>
     <div class="muted small" style="margin-top:8px">Лучше PNG 512×512 с прозрачным фоном.</div>
@@ -341,6 +313,32 @@
   </div>
 </div>
 
+<div class="box">
+  <h2>Чат (ручной вывод в трансляцию)</h2>
+  <div class="grid2">
+    <div>
+      <label>Имя / ник</label>
+      <input id="chatAuthor" type="text" placeholder="Например: @anna">
+    </div>
+    <div>
+      <label>Автоскрытие (сек)</label>
+      <input id="chatDuration" type="number" min="2" max="60" step="1" value="8">
+    </div>
+  </div>
+  <div style="margin-top:10px">
+    <label>Текст сообщения</label>
+    <textarea id="chatText" rows="3" placeholder="Введи сообщение, которое хочешь показать зрителям"></textarea>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn" onclick="chatShow()">Показать</button>
+    <button class="btn secondary" onclick="chatHide()">Скрыть</button>
+    <button class="btn ghost" onclick="chatClear()">Очистить поля</button>
+  </div>
+  <div class="muted small" style="margin-top:8px">
+    Совет: копируй сообщение из VK и вставляй сюда — на экране появится аккуратная плашка снизу по центру.
+  </div>
+</div>
+
 <script>
   let API = "";
   let state = null;
@@ -424,7 +422,24 @@
     img.src = url;
   }
 
-  async function pull(){
+  
+  // ===== Chat overlay (manual) =====
+  function chatShow(){
+    const author = (document.getElementById("chatAuthor").value || "").trim();
+    const text = (document.getElementById("chatText").value || "").trim();
+    const durSec = parseInt(document.getElementById("chatDuration").value || "8", 10);
+    if(!text) return alert("Введи текст сообщения.");
+    const durationMs = Math.max(2000, Math.min(60000, (isFinite(durSec)?durSec:8) * 1000));
+    sendPatch({ chat: { show:true, author, text, ts: Date.now(), durationMs } });
+  }
+  function chatHide(){
+    sendPatch({ chat: { show:false } });
+  }
+  function chatClear(){
+    document.getElementById("chatText").value = "";
+  }
+
+async function pull(){
     API = API || getApi();
     if(!API) { setApiStatus(false); return; }
     document.getElementById("api").value = API;
@@ -462,7 +477,6 @@
 
     safeSetValue("title", state.title || "");
     safeSetValue("season", state.season || "");
-    safeSetValue("timeZone", state.timeZone || "Europe/Moscow");
 
     // teams
     safeSetValue("nameA", state.teamA?.name || "");
@@ -490,13 +504,15 @@
       (c.running ? "⏱️ идёт" : "⏸️ пауза") + " | " + msToMMSS(c.baseMs||0);
 
     // date/time + brand
-    safeSetChecked("showDateTime", !!state.showDateTime);
-    safeSetValue("eventDate", state.eventDate || "");
-    safeSetChecked("showBrandLogo", !!state.showBrandLogo);
-    safeSetValue("brandLogo", state.brandLogo || "");
 
     // update pill time (local time in selected tz)
     updateNowTz();
+  
+    // chat
+    safeSetValue("chatAuthor", state.chat?.author || "");
+    safeSetValue("chatText", state.chat?.text || "");
+    const cd = document.getElementById("chatDuration");
+    if(cd && document.activeElement !== cd) cd.value = Math.round(((state.chat?.durationMs || 8000)/1000));
   }
 
   // ---- live clock in control (selected tz)
@@ -523,33 +539,7 @@
   function saveSeason(){ sendPatch({ season: document.getElementById("season").value.trim() }); setTimeout(pull, 450); }
   function setSeason(s){ document.getElementById("season").value = s; saveSeason(); }
 
-  function saveTimeZone(){
-    const tz = document.getElementById("timeZone").value.trim() || "Europe/Moscow";
-    sendPatch({ timeZone: tz });
-    setTimeout(pull, 450);
-  }
-  function setTZ(tz){ document.getElementById("timeZone").value = tz; saveTimeZone(); }
-
-  // ---------- Date/Time ----------
-  function saveEventDate(){ sendPatch({ eventDate: document.getElementById("eventDate").value }); setTimeout(pull, 450); }
-  function clearEventDate(){ document.getElementById("eventDate").value = ""; sendPatch({ eventDate: "" }); setTimeout(pull, 450); }
-  function saveShowDateTime(){ sendPatch({ showDateTime: document.getElementById("showDateTime").checked }); setTimeout(pull, 450); }
-  function setToday(){
-    const d = new Date();
-    const iso = d.toISOString().slice(0,10);
-    document.getElementById("eventDate").value = iso;
-    sendPatch({ eventDate: iso, showDateTime: true });
-    setTimeout(pull, 450);
-  }
-
   // ---------- Brand ----------
-  function saveBrand(){
-    sendPatch({
-      brandLogo: document.getElementById("brandLogo").value.trim(),
-      showBrandLogo: document.getElementById("showBrandLogo").checked
-    });
-    setTimeout(pull, 450);
-  }
   function hideBrand(){ document.getElementById("showBrandLogo").checked = false; sendPatch({ showBrandLogo:false }); setTimeout(pull, 450); }
 
   // ---------- Teams ----------
